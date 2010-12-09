@@ -1,0 +1,8 @@
+******************************************************************
+
+Now install wkhtmltoimage binaries:
+Global: sudo `which imagekit` --install-wkhtmltoimage
+or inside RVM folder: export TO=`which imgkit | sed 's:/imgkit:/wkhtmltoimage:'` && imgkit --install-wkhtmltoimage
+(run imgkit --help to see more options)
+
+******************************************************************
