@@ -1,10 +1,11 @@
 require 'spec_helper'
 
-describe PDFKit::Middleware do
+=begin
+describe IMGKit::Middleware do
   describe "#translate_paths" do
     
     before do
-      @pdf = PDFKit::Middleware.new({})
+      @pdf = IMGKit::Middleware.new({})
       @env = {'REQUEST_URI' => 'http://example.com/document.pdf', 'rack.url_scheme' => 'http', 'HTTP_HOST' => 'example.com'}
     end
 
@@ -30,7 +31,7 @@ describe PDFKit::Middleware do
   describe "#set_request_to_render_as_pdf" do
     
     before do      
-      @pdf = PDFKit::Middleware.new({})
+      @pdf = IMGKit::Middleware.new({})
 
       @pdf_env = {'PATH_INFO' => Pathname.new("file.pdf"), 'REQUEST_URI' => Pathname.new("file.pdf")}
       @non_pdf_env = {'PATH_INFO' => Pathname.new("file.txt"), 'REQUEST_URI' => Pathname.new("file.txt")}
@@ -47,3 +48,4 @@ describe PDFKit::Middleware do
     end    
   end
 end
+=end

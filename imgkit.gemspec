@@ -18,6 +18,32 @@ Gem::Specification.new do |s|
     "LICENSE",
      "README.md"
   ]
+  s.files = [
+    ".document",
+     ".gitignore",
+     ".rspec",
+     ".rvmrc",
+     "Gemfile",
+     "Gemfile.lock",
+     "LICENSE",
+     "POST_INSTALL",
+     "README.md",
+     "Rakefile",
+     "VERSION",
+     "bin/imgkit",
+     "imgkit.gemspec",
+     "lib/imgkit.rb",
+     "lib/imgkit/configuration.rb",
+     "lib/imgkit/imgkit.rb",
+     "lib/imgkit/middleware.rb",
+     "lib/imgkit/source.rb",
+     "spec/fixtures/example.css",
+     "spec/fixtures/example.html",
+     "spec/middleware_spec.rb",
+     "spec/pdfkit_spec.rb",
+     "spec/source_spec.rb",
+     "spec/spec_helper.rb"
+  ]
   s.homepage = %q{http://github.com/csquared/IMGKit}
   s.post_install_message = %q{******************************************************************
 
@@ -32,6 +58,12 @@ or inside RVM folder: export TO=`which imgkit | sed 's:/imgkit:/wkhtmltoimage:'`
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{HTML+CSS -> JPG}
+  s.test_files = [
+    "spec/middleware_spec.rb",
+     "spec/pdfkit_spec.rb",
+     "spec/source_spec.rb",
+     "spec/spec_helper.rb"
+  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION

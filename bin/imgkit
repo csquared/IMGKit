@@ -12,7 +12,7 @@ def detect_architecture
   when /linux/i
     'i386'
   when /darwin/i
-    'OS-X.i368'
+    'OS-X.i386'
   else
     raise "No binaries found for your system. Please install wkhtmltoimage by hand."
   end
@@ -24,7 +24,7 @@ def cleanup(install_to)
 end
 
 def download_wkhtmltoimage(arch)
-  page = open("http://code.google.com/p/wkhtmltoimage/downloads/list").read
+  page = open("http://code.google.com/p/wkhtmltopdf/downloads/list").read
   download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) || raise("File not found..")
   download = download[1]
   url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
@@ -54,7 +54,7 @@ OptionParser.new do |parser|
 
   parser.on("--install-wkhtmltoimage", "Install wkhtmltoimage binaries (TO=/usr/local/bin ARCHITECTURE=i386)") do
     architecture = ENV['ARCHITECTURE'] || detect_architecture
-    install_to = ENV['TO'] || PDFKit.configuration.wkhtmltoimage
+    install_to = ENV['TO'] || IMGKit.configuration.wkhtmltoimage
     
     Dir.chdir '/tmp'
     
