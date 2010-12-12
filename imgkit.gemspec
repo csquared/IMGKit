@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["csquared"]
-  s.date = %q{2010-12-09}
+  s.date = %q{2010-12-12}
   s.default_executable = %q{imgkit}
   s.description = %q{Uses wkhtmltoimage to create Images using HTML}
   s.email = %q{christopher.continanza@gmail.com}
@@ -35,12 +35,10 @@ Gem::Specification.new do |s|
      "lib/imgkit.rb",
      "lib/imgkit/configuration.rb",
      "lib/imgkit/imgkit.rb",
-     "lib/imgkit/middleware.rb",
      "lib/imgkit/source.rb",
      "spec/fixtures/example.css",
      "spec/fixtures/example.html",
-     "spec/middleware_spec.rb",
-     "spec/pdfkit_spec.rb",
+     "spec/imgkit_spec.rb",
      "spec/source_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -59,8 +57,7 @@ or inside RVM folder: export TO=`which imgkit | sed 's:/imgkit:/wkhtmltoimage:'`
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{HTML+CSS -> JPG}
   s.test_files = [
-    "spec/middleware_spec.rb",
-     "spec/pdfkit_spec.rb",
+    "spec/imgkit_spec.rb",
      "spec/source_spec.rb",
      "spec/spec_helper.rb"
   ]
