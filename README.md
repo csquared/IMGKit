@@ -18,7 +18,7 @@ Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/ant
     
     # IMGKit.new takes the HTML and any options for wkhtmltoimage
     # run `wkhtmltoimage --extended-help` for a full list of options
-    kit = IMGKit.new(html, :page_size => 'Letter')
+    kit = IMGKit.new(html, :quality => 50)
     kit.stylesheets << '/path/to/css/file'
     
     # Get an inline image
@@ -33,7 +33,7 @@ Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/ant
     kit = IMGKit.new(File.new('/path/to/html'))
 
     # Add any kind of option through meta tags
-    IMGKit.new('<html><head><meta name="imgkit-page_size" content="Letter")
+    IMGKit.new('<html><head><meta name="imgkit-quality" content="75")
     
 ## Configuration
 
@@ -49,16 +49,17 @@ If you're on Windows or you installed wkhtmltopdf by hand to a location other th
 
 
 ## Mime Types
-register a .jpg mime type in: config/initializers/mime_type.rb
-<code>
-Mime::Type.register       "image/jpeg", :jpg
-</code>
+register a .jpg mime type in: 
+
+    #config/initializers/mime_type.rb
+    Mime::Type.register       "image/jpeg", :jpg
 
 ## Controllers
 You can then send JPGs with
-<code>
-send_data(@kit.to_img, :type => "image/jpeg", :disposition => 'inline')
-</code>
+
+    format.jpg do
+      send_data(@kit.to_img, :type => "image/jpeg", :disposition => 'inline')
+    end
 
 This allows you to take advantage of rails page caching so you only generate the
 image when you need to.
