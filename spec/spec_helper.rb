@@ -6,6 +6,7 @@ require 'rspec'
 require 'rspec/autorun'
 require 'mocha'
 require 'rack'
+require 'tempfile'
 
 RSpec.configure do |config|
   

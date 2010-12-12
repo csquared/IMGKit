@@ -46,7 +46,7 @@ Gem::Specification.new do |s|
   s.post_install_message = %q{******************************************************************
 
 Now install wkhtmltoimage binaries:
-Global: sudo `which imagekit` --install-wkhtmltoimage
+Global: sudo `which imgkit` --install-wkhtmltoimage
 or inside RVM folder: export TO=`which imgkit | sed 's:/imgkit:/wkhtmltoimage:'` && imgkit --install-wkhtmltoimage
 (run imgkit --help to see more options)
 

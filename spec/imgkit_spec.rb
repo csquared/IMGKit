@@ -93,22 +93,31 @@ describe IMGKit do
   end
   
   context "#to_img" do
+    def filetype_of(img) 
+      result = nil
+      tmpfile = Tempfile.new('imgkit') 
+      File.open(tmpfile.path, 'w') { |f| f << img }
+      result = `file #{tmpfile.path}`
+      tmpfile.unlink()
+      result
+    end
+
     it "should generate a IMG of the HTML" do
       imgkit = IMGKit.new('html')
       img = imgkit.to_img
-      #img[0...4].should == "%PDF" # PDF Signature at beginning of file
+      filetype_of(img).should include('JPEG')
     end
     
     it "should generate an Image with a numerical parameter" do
       imgkit = IMGKit.new('html', :quality => 50)
       img = imgkit.to_img
-      #img[0...4].should == "%PDF" # PDF Signature at beginning of file
+      filetype_of(img).should include('JPEG')
     end
     
     it "should generate an Image with a symbol parameter" do
-      imgkit = IMGKit.new('html', :format => :gif)
+      imgkit = IMGKit.new('html', :username => 'chris')
       img = imgkit.to_img
-      #img[0...4].should == "%PDF" # PDF Signature at beginning of file
+      filetype_of(img).should include('JPEG')
     end
     
     it "should have the stylesheet added to the head if it has one" do
@@ -145,12 +154,12 @@ describe IMGKit do
       File.delete(@file_path)
     end
     
-    it "should create a file with the  as content" do
+    it "should create a file with the result of :to_img  as content" do
       imgkit = IMGKit.new('html', :quality => 50)
-      imgkit.expects(:to_img).returns('PDF')
+      imgkit.expects(:to_img).returns('CONTENT')
       file = imgkit.to_file(@file_path)
       file.should be_instance_of(File)
-      File.read(file.path).should == 'PDF'
+      File.read(file.path).should == 'CONTENT'
     end
   end
   
