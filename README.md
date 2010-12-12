@@ -1,78 +1,67 @@
-# PDFKit
+# IMGKit
 
-Create PDFs using plain old HTML+CSS. Uses [wkhtmltopdf](http://github.com/antialize/wkhtmltopdf) on the backend which renders HTML using Webkit.
+Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/antialize/wkhtmltopdf) on the backend which renders HTML using Webkit.
 
 ## Install
 
-### PDFKit
+### IMGKit
 
-    gem install pdfkit
+    gem install imgkit
 
-### wkhtmltopdf
- * **Automatic**: `sudo pdfkit --install-wkhtmltopdf`  
+### wkhtmltoimage
+ * **Automatic**: `sudo imgkit --install-wkhtmltoimage`  
  install latest version into /usr/local/bin  
  (overwrite defaults with e.g. ARCHITECTURE=amd64 TO=/home/foo/bin)
  * By hand: http://code.google.com/p/wkhtmltopdf/downloads/list
 
 ## Usage
     
-    # PDFKit.new takes the HTML and any options for wkhtmltopdf
-    # run `wkhtmltopdf --extended-help` for a full list of options
-    kit = PDFKit.new(html, :page_size => 'Letter')
+    # IMGKit.new takes the HTML and any options for wkhtmltoimage
+    # run `wkhtmltoimage --extended-help` for a full list of options
+    kit = IMGKit.new(html, :page_size => 'Letter')
     kit.stylesheets << '/path/to/css/file'
     
-    # Git an inline PDF
-    pdf = kit.to_pdf
+    # Get an inline image
+    img = kit.to_img
     
     # Save the PDF to a file
-    file = kit.to_file('/path/to/save/pdf')
+    file = kit.to_file('/path/to/save/file.jpg')
     
-    # PDFKit.new can optionally accept a URL or a File.
+    # IMGKit.new can optionally accept a URL or a File.
     # Stylesheets can not be added when source is provided as a URL of File.
-    kit = PDFKit.new('http://google.com')
-    kit = PDFKit.new(File.new('/path/to/html'))
+    kit = IMGKit.new('http://google.com')
+    kit = IMGKit.new(File.new('/path/to/html'))
 
     # Add any kind of option through meta tags
-    PDFKit.new('<html><head><meta name="pdfkit-page_size" content="Letter")
+    IMGKit.new('<html><head><meta name="imgkit-page_size" content="Letter")
     
 ## Configuration
 
 If you're on Windows or you installed wkhtmltopdf by hand to a location other than /usr/local/bin you will need to tell PDFKit where the binary is. You can configure PDFKit like so:
 
-    # config/initializers/pdfkit.rb
-    PDFKit.configure do |config|
-      config.wkhtmltopdf = '/path/to/wkhtmltopdf'
+    # config/initializers/imgkit.rb
+    IMGKit.configure do |config|
+      config.wkhtmltoimage = '/path/to/wkhtmltoimage'
       config.default_options = {
-        :page_size => 'Legal',
-        :print_media_type => true
+        :quality => 60
       }
     end
 
-## Middleware
 
-PDFKit comes with a middleware that allows users to get a PDF view of any page on your site by appending .pdf to the URL.
+## Mime Types
+register a .jpg mime type in: config/initializers/mime_type.rb
+<code>
+Mime::Type.register       "image/jpeg", :jpg
+</code>
 
-### Middleware Setup
+## Controllers
+You can then send JPGs with
+<code>
+send_data(@kit.to_img, :type => "image/jpeg", :disposition => 'inline')
+</code>
 
-**Non-Rails Rack apps**
-   
-    # in config.ru
-    require 'pdfkit'
-    use PDFKit::Middleware
-    
-**Rails apps**
-
-    # in application.rb(Rails3) or environment.rb(Rails2)
-    require 'pdfkit'
-    config.middleware.use PDFKit::Middleware
-    
-**With PDFKit options**
-
-    # options will be passed to PDFKit.new
-    config.middleware.use PDFKit::Middleware, :print_media_type => true
-
-## TODO
- - add amd64 support in --install-wkhtmltopdf
+This allows you to take advantage of rails page caching so you only generate the
+image when you need to.
 
 ## Note on Patches/Pull Requests
  
@@ -87,4 +76,6 @@ PDFKit comes with a middleware that allows users to get a PDF view of any page o
 
 ## Copyright
 
-Copyright (c) 2010 Jared Pace. See LICENSE for details.
+Copyright (c) 2010 Chris Continanza 
+Based on work by Jared Pace  
+See LICENSE for details.
