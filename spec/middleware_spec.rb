@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-=begin
 describe IMGKit::Middleware do
   describe "#translate_paths" do
     
@@ -48,4 +47,3 @@ describe IMGKit::Middleware do
     end    
   end
 end
-=end

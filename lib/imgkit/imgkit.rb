@@ -32,7 +32,6 @@ class IMGKit
   def command
     args = [executable]
     args += @options.to_a.flatten.compact
-    args << '--quiet'
     
     if @source.html?
       args << '-' # Get HTML from stdin
@@ -40,7 +39,7 @@ class IMGKit
       args << @source.to_s
     end
     
-    args << '-' # Read PDF from stdout
+    args << '-' # Read IMG from stdout
     args
   end
 
@@ -58,18 +57,18 @@ class IMGKit
     append_stylesheets
     
     image = Kernel.open('|-', "w+")
-    exec(*command) if image.nil?
+    exec(*command + '2>/dev/null') if image.nil?
     image.puts(@source.to_s) if @source.html?
     image.close_write
     result = image.gets(nil)
     image.close_read
 
-    raise "command failed: #{command.join(' ')}" if result.to_s.strip.empty?
+    raise "command failed: #{command.join(' ')}" if result.empty?
     return result
   end
   
   def to_file(path)
-    File.open(path,'w') {|file| file << self.to_image}
+    File.open(path,'w') {|file| file << self.to_img}
   end
   
   protected

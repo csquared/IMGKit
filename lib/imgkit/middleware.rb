@@ -1,4 +1,4 @@
-class PDFKit
+class IMGKit
   
   class Middleware
     
@@ -19,7 +19,7 @@ class PDFKit
         
         body = translate_paths(body, env)
         
-        pdf = PDFKit.new(body, @options)
+        pdf = IMGKit.new(body, @options)
         body = pdf.to_pdf
         
         # Do not cache PDFs
