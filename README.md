@@ -81,6 +81,6 @@ image when you need to.
 
 ## Copyright
 
-Copyright (c) 2010 Chris Continanza 
+Copyright (c) 2010 <a href="mailto:christopher.continanza@gmail.com">Chris Continanza</a>
 Based on work by Jared Pace  
 See LICENSE for details.
