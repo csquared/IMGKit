@@ -21,10 +21,10 @@ Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/ant
     kit = IMGKit.new(html, :quality => 50)
     kit.stylesheets << '/path/to/css/file'
     
-    # Get an inline image
+    # Get the image BLOB
     img = kit.to_img
     
-    # Save the PDF to a file
+    # Save the JPG to a file
     file = kit.to_file('/path/to/save/file.jpg')
     
     # IMGKit.new can optionally accept a URL or a File.
@@ -37,7 +37,7 @@ Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/ant
     
 ## Configuration
 
-If you're on Windows or you installed wkhtmltopdf by hand to a location other than /usr/local/bin you will need to tell PDFKit where the binary is. You can configure PDFKit like so:
+If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell PDFKit where the binary is. You can configure PDFKit like so:
 
     # config/initializers/imgkit.rb
     IMGKit.configure do |config|
@@ -48,13 +48,15 @@ If you're on Windows or you installed wkhtmltopdf by hand to a location other th
     end
 
 
-## Mime Types
+## Rails 
+
+### Mime Types
 register a .jpg mime type in: 
 
     #config/initializers/mime_type.rb
     Mime::Type.register       "image/jpeg", :jpg
 
-## Controllers
+### Controller Actions
 You can then send JPGs with
 
     format.jpg do
