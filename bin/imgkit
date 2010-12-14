@@ -6,7 +6,7 @@ require 'open-uri'
 require 'imgkit/configuration'
 
 def detect_architecture
-  case Config::CONFIG['host_os']
+  case Config::CONFIG['arch']
   when /x86_64-linux/i
     'amd64'
   when /linux/i
@@ -24,10 +24,15 @@ def cleanup(install_to)
 end
 
 def download_wkhtmltoimage(arch)
-  page = open("http://code.google.com/p/wkhtmltopdf/downloads/list").read
-  download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) || raise("File not found..")
-  download = download[1]
-  url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
+  if ENV['BZIP'] 
+    download = "wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
+    url = "http://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
+  else
+    page = open("http://code.google.com/p/wkhtmltopdf/downloads/list").read
+    download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) || raise("File not found..")
+    download = download[1]
+    url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
+  end
   puts "Downloading #{download} from #{url}"
   
   `curl #{url} > #{download}`
@@ -37,36 +42,49 @@ end
 def install(download, arch, install_to)
   puts "Installing #{download} to #{install_to}"
   if download =~ /.tar.bz2$/
-    `tar xjvf #{download}`
-    `mv wkhtmltoimage-#{arch} #{install_to}`
+    `sudo tar xjvf #{download}`
+    `sudo mv wkhtmltoimage-#{arch} #{install_to}`
   elsif download =~ /.tar.lzma$/
     raise "couldn't extract archive: lzcat not found" unless system("which lzcat > /dev/null 2>/dev/null")
-    `lzcat #{download} | tar x`
-    `mv wkhtmltoimage-#{arch} #{install_to}`
+    puts "Warning: lzcat is broken on Ubuntu. Re-run with --use-bzip to install alternate version"
+    `sudo lzcat #{download} | tar x`
+    `sudo mv wkhtmltoimage-#{arch} #{install_to}`
   else
-    `mv #{download} #{install_to}`
+    `sudo mv #{download} #{install_to}`
   end
   `sudo chmod +x #{install_to}`
 end
 
+@command = Proc.new { puts "Nothing to do: use --help"}
+
 OptionParser.new do |parser|
   parser.banner = "IMGKit\n\nOptions are:"
 
+  parser.on("--use-bzip", "Force bzip download for Ubuntu because lzcat is broken") do
+    ENV['BZIP'] = 'true'
+  end
+
   parser.on("--install-wkhtmltoimage", "Install wkhtmltoimage binaries (TO=/usr/local/bin ARCHITECTURE=i386)") do
-    architecture = ENV['ARCHITECTURE'] || detect_architecture
-    install_to = ENV['TO'] || IMGKit.configuration.wkhtmltoimage
-    
-    Dir.chdir '/tmp'
-    
-    cleanup(install_to)
-    download = download_wkhtmltoimage(architecture)
-    install(download, architecture, install_to)
+    @command = Proc.new do
+      architecture = ENV['ARCHITECTURE'] || detect_architecture
+      install_to = ENV['TO'] || IMGKit.configuration.wkhtmltoimage
+      
+      Dir.chdir '/tmp'
+      
+      cleanup(install_to)
+      download = download_wkhtmltoimage(architecture)
+      install(download, architecture, install_to)
+    end
   end
 
   parser.on("--version", "Show Version.") do
-    root = File.dirname(File.dirname(__FILE__))
-    puts File.read(File.join(root, 'VERSION'))
+    @command = Proc.new do
+      root = File.dirname(File.dirname(__FILE__))
+      puts File.read(File.join(root, 'VERSION'))
+    end
   end
 
   parser.on("-h", "--help", "Show this.") { puts parser; exit }
 end.parse!
+
+@command.call
