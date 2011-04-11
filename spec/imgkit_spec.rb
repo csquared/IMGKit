@@ -142,6 +142,11 @@ describe IMGKit do
       imgkit.stylesheets << css
       lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
     end
+
+    it "should throw an error if the wkhtmltoimage command fails" do
+      imgkit = IMGKit.new('http://www.hopefully.this.site.never.exists.asjdhjkalshgflkahfsglkahfdlg11.com')
+      lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
+    end
   end
   
   context "#to_file" do

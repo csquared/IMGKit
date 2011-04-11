@@ -13,6 +13,15 @@ class IMGKit
       super("Improper Source: #{msg}")
     end
   end
+
+  class CommandFailedError < RuntimeError
+    attr_reader :command, :stderr
+    def initialize(command, stderr)
+      @command = command
+      @stderr  = stderr
+      super("Command failed: #{command}: #{stderr}")
+    end
+  end
   
   attr_accessor :source, :stylesheets
   attr_reader :options
@@ -67,15 +76,17 @@ class IMGKit
 =end
 
     result = nil
+    stderr_output = nil
     Open3.popen3(*command) do |stdin,stdout,stderr|
       stdin << (@source.to_s) if @source.html?
       stdin.close
       result = stdout.gets(nil)
+      stderr_output = stderr.readlines.join
       stdout.close
       stderr.close
     end
     
-    raise "command failed: #{command.join(' ')}" unless result
+    raise CommandFailedError.new(command.join(' '), stderr_output)  unless result
     return result
   end
   
