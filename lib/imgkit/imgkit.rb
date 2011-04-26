@@ -65,19 +65,9 @@ class IMGKit
   def to_img
     append_stylesheets
 
-=begin  Need to use Open3 b.c wkhtmltoimage has to --quiet option
-        and we need to slience $stderr
-    image = Kernel.open('|-', "w+")
-    exec(*command) if image.nil?
-    image.puts(@source.to_s) if @source.html?
-    image.close_write
-    result = image.gets(nil)
-    image.close_read
-=end
-
     result = nil
     stderr_output = nil
-    Open3.popen3(*command) do |stdin,stdout,stderr|
+    Open4.popen4(*command) do |pid,stdin,stdout,stderr|
       stdin << (@source.to_s) if @source.html?
       stdin.close
       result = stdout.gets(nil)

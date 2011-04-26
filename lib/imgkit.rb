@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'open3'
+require 'open4'
 require 'imgkit/source'
 require 'imgkit/imgkit'
 require 'imgkit/configuration'

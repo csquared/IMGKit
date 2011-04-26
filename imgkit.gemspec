@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.post_install_message = File.read('POST_INSTALL')
 
   s.rubyforge_project = "imgkit"
+  s.add_dependency "open4"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
