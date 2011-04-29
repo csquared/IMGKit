@@ -67,7 +67,7 @@ class IMGKit
 
     result = nil
     stderr_output = nil
-    Open4.popen4(*command) do |pid,stdin,stdout,stderr|
+    Open3.popen3(*command) do |stdin,stdout,stderr|
       stdin << (@source.to_s) if @source.html?
       stdin.close
       result = stdout.gets(nil)
