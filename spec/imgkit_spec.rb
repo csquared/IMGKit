@@ -60,6 +60,12 @@ describe IMGKit do
       imgkit = IMGKit.new('html', :header_center => "foo [page]")
       imgkit.command[imgkit.command.index('--header-center') + 1].should == 'foo [page]'
     end
+
+    it "should properly handle multi-part arguments" do
+      imgkit = IMGKit.new('html', :custom_header => ['User-Agent', 'some user agent'])
+      imgkit.command[imgkit.command.index('--custom-header') + 1].should == 'User-Agent'
+      imgkit.command[imgkit.command.index('--custom-header') + 2].should == 'some user agent'
+    end
     
     it "read the source from stdin if it is html" do
       imgkit = IMGKit.new('html')
