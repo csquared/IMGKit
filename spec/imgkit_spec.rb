@@ -92,7 +92,7 @@ describe IMGKit do
     end
   end
   
-  context "#to_img" do
+  context "#to_img(format = nil)" do
     def filetype_of(img) 
       result = nil
       tmpfile = Tempfile.new('imgkit') 
@@ -147,6 +147,27 @@ describe IMGKit do
       imgkit = IMGKit.new('http://www.hopefully.this.site.never.exists.asjdhjkalshgflkahfsglkahfdlg11.com')
       lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
     end
+
+    context "when there is no format" do
+      it "should fallback to jpg"
+    end
+    context "when format = :jpg" do
+      it "should create a jpg"
+    end
+    context "when format = :png" do
+      it "should create a png" 
+    end
+    context "when format is unknown" do
+      it "should raise an UnknownFormat exception"
+    end
+  end
+
+  context "#to_jpg" do
+    it "should call to_img(:jpg)"
+  end
+
+  context "#to_png" do
+    it "should call to_img(:png)"
   end
   
   context "#to_file" do
