@@ -35,11 +35,20 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     kit = IMGKit.new(File.new('/path/to/html'))
 
     # Add any kind of option through meta tags
-    IMGKit.new('<html><head><meta name="imgkit-quality" content="75")
+    IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
+
+    # New in 1.3! 
+    # Supports JPEG, PNG, and TIFF formats
+    IMGKit.new("hello").to_img            #=> JPEG
+    IMGKit.new("hello").to_jpg            #=> JPEG
+    IMGKit.new("hello").to_jpeg           #=> JPEG
+    IMGKit.new("hello").to_png            #=> PNG
+    IMGKit.new("hello").to_tif            #=> TIFF
+    IMGKit.new("hello").to_tiff           #=> TIFF
     
 ## Configuration
 
-If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell PDFKit where the binary is. You can configure PDFKit like so:
+If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell IMGKit where the binary is. You can configure IMGKit like so:
 
     # config/initializers/imgkit.rb
     IMGKit.configure do |config|
@@ -49,7 +58,6 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
       }
     end
 
-
 ## Rails 
 
 ### Mime Types
@@ -58,11 +66,31 @@ register a .jpg mime type in:
     #config/initializers/mime_type.rb
     Mime::Type.register       "image/jpeg", :jpg
 
+register a .png mime type in: 
+
+    #config/initializers/mime_type.rb
+    Mime::Type.register       "image/png", :png
+
 ### Controller Actions
-You can then send JPGs with
+You can respond in a controller with:
+
+    @kit = IMGKit.new(render_as_string)
 
     format.jpg do
-      send_data(@kit.to_img, :type => "image/jpeg", :disposition => 'inline')
+      send_data(@kit.to_jpg, :type => "image/jpeg", :disposition => 'inline')
+    end
+
+    - or -
+
+    format.png do
+      send_data(@kit.to_png, :type => "image/png", :disposition => 'inline')
+    end
+
+    - or -
+
+    respond_to do |format|
+      send_data(@kit.to_img(format.to_sym), 
+                :type => "image/png", :disposition => 'inline')
     end
 
 This allows you to take advantage of rails page caching so you only generate the

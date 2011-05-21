@@ -174,7 +174,7 @@ describe IMGKit do
     end
   end
 
-  context "to_<known_format>" do
+  context "#to_<known_format>" do
     IMGKit::KNOWN_FORMATS.each do |format|
       describe "#to_#{format}" do
         it "should create a #{format}" do
