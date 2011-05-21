@@ -88,7 +88,8 @@ class IMGKit
   end
   
   def to_file(path)
-    File.open(path,'w') {|file| file << self.to_img}
+    format = File.extname(path).gsub(/^\./,'').to_sym
+    File.open(path,'w') {|file| file << self.to_img(format)}
   end
 
   def method_missing(name, *args, &block)

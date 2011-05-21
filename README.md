@@ -25,7 +25,9 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     
     # Get the image BLOB
     img = kit.to_img
-    
+    # New in 1.3!
+    img = kit.to_img(:png)
+
     # Save the JPG to a file
     file = kit.to_file('/path/to/save/file.jpg')
     

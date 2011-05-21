@@ -207,6 +207,16 @@ describe IMGKit do
       file.should be_instance_of(File)
       File.read(file.path).should == 'CONTENT'
     end
+
+    IMGKit::KNOWN_FORMATS.each do |format|
+      it "should use the extension #{format} as the format" do
+        @file_path = File.join(SPEC_ROOT,'fixtures',"test.#{format}")
+        imgkit = IMGKit.new('html', :quality => 50)
+        file = imgkit.to_file(@file_path)
+        file.should be_instance_of(File)
+        File.read(file.path).should be_a(format)
+      end
+    end
   end
   
   context "security" do
