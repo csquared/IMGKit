@@ -1,5 +1,5 @@
 class IMGKit
-  KNOWN_FORMATS = [:jpg, :png]
+  KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]
 
   class NoExecutableError < StandardError
     def initialize
@@ -86,17 +86,17 @@ class IMGKit
     raise CommandFailedError.new(command.join(' '), stderr_output)  unless result
     return result
   end
-
-  def to_jpg
-    self.to_img(:jpg)
-  end
-
-  def to_png
-    self.to_img(:png)
-  end
   
   def to_file(path)
     File.open(path,'w') {|file| file << self.to_img}
+  end
+
+  def method_missing(name, *args, &block)
+    if(m = name.to_s.match(/^to_(\w+)/))
+      self.send(:to_img, m[1].to_sym)
+    else
+      super
+    end
   end
   
   protected

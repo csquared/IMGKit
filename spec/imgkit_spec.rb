@@ -1,10 +1,6 @@
 require 'spec_helper' 
 
 describe IMGKit do
-  #its a magic number! http://www.youtube.com/watch?v=GA69pmhrBiE
-  JPEG = "\xFF\xD8\xFF\xE0"
-  PNG  = "\x89\x50\x4e\x47"
-
   context "initialization" do
     it "should accept HTML as the source" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
@@ -153,38 +149,44 @@ describe IMGKit do
 
     context "when there is no format" do
       it "should fallback to jpg" do
-        IMGKit.new("Hello, world").to_img.should be_a_jpg
+        IMGKit.new("Hello, world").to_img.should be_a(:jpg)
       end
     end
 
     context "when format = :jpg" do
       it "should create a jpg" do
-        IMGKit.new("Hello, world").to_img(:jpg).should be_a_jpg
+        IMGKit.new("Hello, world").to_img(:jpg).should be_a(:jpg)
       end
     end
 
-    context "when format = :png" do
-      it "should create a png" do
-        IMGKit.new("Hello, world").to_img(:png).should be_a_png
+    context "when format is a known format" do
+      it "should create an image with that format" do
+        IMGKit::KNOWN_FORMATS.each do |format|
+          IMGKit.new("Hello, world").to_img(format).should be_a(format)
+        end
       end
     end
 
     context "when format is unknown" do
       it "should raise an UnknownFormatError" do
-        lambda { IMGKit.new("Hello, world").to_img(:tiff) }.should raise_error(IMGKit::UnknownFormatError)
+        lambda { IMGKit.new("Hello, world").to_img(:blah) }.should raise_error(IMGKit::UnknownFormatError)
       end
     end
   end
 
-  context "#to_jpg" do
-    it "should create a jpg" do
-      IMGKit.new("Hello").to_jpg.should be_a_jpg
+  context "to_<known_format>" do
+    IMGKit::KNOWN_FORMATS.each do |format|
+      describe "#to_#{format}" do
+        it "should create a #{format}" do
+          IMGKit.new("Hello").send("to_#{format}").should be_a(format)
+        end
+      end
     end
   end
 
-  context "#to_png" do
-    it "should create a png" do
-      IMGKit.new("Hello").to_png.should be_a_png
+  context "#to_<unkown_format>" do
+    it "should raise and UnknownFormatError" do
+      lambda { IMGKit.new("Hello, world").to_blah }.should raise_error(IMGKit::UnknownFormatError)
     end
   end
   
