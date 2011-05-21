@@ -1,11 +1,12 @@
 class IMGKit
   class Configuration
-    attr_accessor :meta_tag_prefix, :wkhtmltoimage, :default_options
+    attr_accessor :meta_tag_prefix, :wkhtmltoimage, :default_options, :default_format
 
     def initialize
       @meta_tag_prefix = 'imgkit-'
-      @wkhtmltoimage = '/usr/local/bin/wkhtmltoimage'
+      @wkhtmltoimage   = '/usr/local/bin/wkhtmltoimage'
       @default_options = {}
+      @default_format  = :jpg
     end
   end
 

@@ -151,6 +151,24 @@ describe IMGKit do
       it "should fallback to jpg" do
         IMGKit.new("Hello, world").to_img.should be_a(:jpg)
       end
+
+      context "when a default_format has been configured" do
+        before do
+          IMGKit.configure do |config|
+            config.default_format = :png
+          end
+        end
+
+        after do
+          IMGKit.configure do |config|
+            config.default_format = :jpg
+          end
+        end
+
+        it "should use the configured format" do
+          IMGKit.new("Oh hai!").to_img.should be_a(:png)
+        end
+      end
     end
 
     context "when format = :jpg" do
@@ -197,7 +215,7 @@ describe IMGKit do
     end
     
     after do
-      File.delete(@file_path)
+      File.delete(@file_path) if File.exist?(@file_path)
     end
     
     it "should create a file with the result of :to_img  as content" do
@@ -216,6 +234,19 @@ describe IMGKit do
         file.should be_instance_of(File)
         File.read(file.path).should be_a(format)
       end
+    end
+
+    it "should raise UnknownFormatError when format is unknown" do
+      kit = IMGKit.new("html")
+      lambda { 
+        kit.to_file("file.bad_format") 
+      }.should raise_error(IMGKit::UnknownFormatError)
+    end
+
+    it "should not create the file if format is unknown" do
+      kit = IMGKit.new("html")
+      kit.to_file("file.bad_format") rescue nil 
+      File.exist?("file.bad_format").should be_false
     end
   end
   

@@ -89,7 +89,8 @@ class IMGKit
   
   def to_file(path)
     format = File.extname(path).gsub(/^\./,'').to_sym
-    File.open(path,'w') {|file| file << self.to_img(format)}
+    set_format(format)
+    File.open(path,'w') {|file| file << self.to_img}
   end
 
   def method_missing(name, *args, &block)
@@ -162,7 +163,7 @@ class IMGKit
     end
 
     def set_format(format)
-      format = :jpg unless format
+      format = IMGKit.configuration.default_format unless format
       @options.merge!(:format => format.to_s) unless @options[:format]
       raise UnknownFormatError.new(format) unless KNOWN_FORMATS.include?(@options[:format].to_sym)
     end

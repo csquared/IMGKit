@@ -46,12 +46,11 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
 
     # Format shortcuts - New in 1.3!
-    IMGKit.new("hello").to_img            #=> JPEG
-    IMGKit.new("hello").to_jpg            #=> JPEG
-    IMGKit.new("hello").to_jpeg           #=> JPEG
-    IMGKit.new("hello").to_png            #=> PNG
-    IMGKit.new("hello").to_tif            #=> TIFF
-    IMGKit.new("hello").to_tiff           #=> TIFF
+    IMGKit.new("hello").to_jpg       
+    IMGKit.new("hello").to_jpeg      
+    IMGKit.new("hello").to_png       
+    IMGKit.new("hello").to_tif       
+    IMGKit.new("hello").to_tiff      
     
 ## Configuration
 
@@ -63,6 +62,7 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
       config.default_options = {
         :quality => 60
       }
+      config.default_format = :png
     end
 
 ## Rails 
