@@ -1,6 +1,10 @@
 require 'spec_helper' 
 
 describe IMGKit do
+  #its a magic number! http://www.youtube.com/watch?v=GA69pmhrBiE
+  JPEG = "\xFF\xD8\xFF\xE0"
+  PNG  = "\x89\x50\x4e\x47"
+
   context "initialization" do
     it "should accept HTML as the source" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
@@ -19,11 +23,6 @@ describe IMGKit do
       imgkit = IMGKit.new(File.new(file_path))
       imgkit.source.should be_file
       imgkit.source.to_s.should == file_path
-    end
-    
-    it "should parse the options into a cmd line friedly format" do
-      imgkit = IMGKit.new('html', :quality => 75)
-      imgkit.options.should have_key('--quality')
     end
     
     it "should provide no default options" do
@@ -49,13 +48,17 @@ describe IMGKit do
       imgkit.command[0].should include('wkhtmltoimage')
       imgkit.command.should include('-')
     end
+
+    it "should parse the options into a cmd line friedly format" do
+      imgkit = IMGKit.new('html', :quality => 75)
+      imgkit.command.should include('--quality')
+    end
     
     it "will not include default options it is told to omit" do
       imgkit = IMGKit.new('html')
       imgkit = IMGKit.new('html', :disable_smart_shrinking => false)
       imgkit.command.should_not include('--disable-smart-shrinking')
     end
-    
     it "should encapsulate string arguments in quotes" do
       imgkit = IMGKit.new('html', :header_center => "foo [page]")
       imgkit.command[imgkit.command.index('--header-center') + 1].should == 'foo [page]'
@@ -149,25 +152,40 @@ describe IMGKit do
     end
 
     context "when there is no format" do
-      it "should fallback to jpg"
+      it "should fallback to jpg" do
+        IMGKit.new("Hello, world").to_img.should be_a_jpg
+      end
     end
+
     context "when format = :jpg" do
-      it "should create a jpg"
+      it "should create a jpg" do
+        IMGKit.new("Hello, world").to_img(:jpg).should be_a_jpg
+      end
     end
+
     context "when format = :png" do
-      it "should create a png" 
+      it "should create a png" do
+        IMGKit.new("Hello, world").to_img(:png).should be_a_png
+      end
     end
+
     context "when format is unknown" do
-      it "should raise an UnknownFormat exception"
+      it "should raise an UnknownFormatError" do
+        lambda { IMGKit.new("Hello, world").to_img(:tiff) }.should raise_error(IMGKit::UnknownFormatError)
+      end
     end
   end
 
   context "#to_jpg" do
-    it "should call to_img(:jpg)"
+    it "should create a jpg" do
+      IMGKit.new("Hello").to_jpg.should be_a_jpg
+    end
   end
 
   context "#to_png" do
-    it "should call to_img(:png)"
+    it "should create a png" do
+      IMGKit.new("Hello").to_png.should be_a_png
+    end
   end
   
   context "#to_file" do
