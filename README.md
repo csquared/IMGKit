@@ -25,11 +25,17 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     
     # Get the image BLOB
     img = kit.to_img
-    # New in 1.3!
-    img = kit.to_img(:png)
 
-    # Save the JPG to a file
+    # New in 1.3!
+    img = kit.to_img(:jpg)      #default
+    img = kit.to_img(:jpeg)     
+    img = kit.to_img(:png)
+    img = kit.to_img(:tif)
+    img = kit.to_img(:tiff)
+
+    # Save the image to a file
     file = kit.to_file('/path/to/save/file.jpg')
+    file = kit.to_file('/path/to/save/file.png')
     
     # IMGKit.new can optionally accept a URL or a File.
     # Stylesheets can not be added when source is provided as a URL of File.
@@ -39,8 +45,7 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     # Add any kind of option through meta tags
     IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
 
-    # New in 1.3! 
-    # Supports JPEG, PNG, and TIFF formats
+    # Format shortcuts - New in 1.3!
     IMGKit.new("hello").to_img            #=> JPEG
     IMGKit.new("hello").to_jpg            #=> JPEG
     IMGKit.new("hello").to_jpeg           #=> JPEG
