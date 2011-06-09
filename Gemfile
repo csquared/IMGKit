@@ -1,6 +1,6 @@
 source :rubygems
 
-group :development do
+group :test do
   gem "rspec", "~> 2"
   gem "rspec-core", "~> 2"
   gem "mocha"
