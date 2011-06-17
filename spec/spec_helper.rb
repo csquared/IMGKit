@@ -18,12 +18,16 @@ end
 
 module MagicNumber
   extend self
-  JPG  = "\xFF\xD8\xFF\xE0".force_encoding("UTF-8")
+  JPG  = "\xFF\xD8\xFF\xE0" #.force_encoding("UTF-8")
   JPEG = JPG
-  PNG  = "\x89\x50\x4e\x47".force_encoding("UTF-8")
-  TIFF = "\x49\x49\x2a\x00".force_encoding("UTF-8")
+  PNG  = "\x89\x50\x4e\x47" #.force_encoding("UTF-8")
+  TIFF = "\x49\x49\x2a\x00" #.force_encoding("UTF-8")
   TIF  = TIFF
-  GIF  = "\x47\x49\x46\x38".force_encoding("UTF-8") 
+  GIF  = "\x47\x49\x46\x38"
+
+  if "".respond_to?(:force_encoding)
+    constants.each { |c| const_get(c).force_encoding("UTF-8")  }
+  end
 
   def read(string)
     string[0,4]
@@ -32,7 +36,7 @@ end
 
 RSpec::Matchers.define :be_a do |expected|
   match do |actual|
-    @expected = MagicNumber.const_get(expected.upcase)
+    @expected = MagicNumber.const_get(expected.to_s.upcase)
     MagicNumber.read(actual) == @expected
   end
   failure_message_for_should do |actual|

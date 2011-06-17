@@ -4,6 +4,7 @@ GEM
     archive-tar-minitar (0.5.2)
     columnize (0.3.2)
     diff-lcs (1.1.2)
+    linecache (0.45)
     linecache19 (0.5.12)
       ruby_core_source (>= 0.1.4)
     mocha (0.9.12)
@@ -16,6 +17,11 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
+    ruby-debug (0.10.4)
+      columnize (>= 0.1)
+      ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4)
+      linecache (>= 0.3)
     ruby-debug-base19 (0.11.25)
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
@@ -35,4 +41,5 @@ DEPENDENCIES
   rack
   rspec (~> 2)
   rspec-core (~> 2)
+  ruby-debug
   ruby-debug19
