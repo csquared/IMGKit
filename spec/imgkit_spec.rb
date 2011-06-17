@@ -149,7 +149,9 @@ describe IMGKit do
     end
 
     it "should throw an error if the wkhtmltoimage command fails" do
-      imgkit = IMGKit.new('http://www.hopefully.this.site.never.exists.asjdhjkalshgflkahfsglkahfdlg11.com')
+                                    #stdin        #stdout       #stderr
+      Open3.stub(:popen3).and_yield(StringIO.new, StringIO.new, StringIO.new("This failed, dude"))
+      imgkit = IMGKit.new('http://www.example.com')
       lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
     end
 

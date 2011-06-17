@@ -40,7 +40,9 @@ RSpec::Matchers.define :be_a do |expected|
     @expected = MagicNumber.const_get(expected.to_s.upcase)
     MagicNumber.read(actual) == @expected
   end
+
   failure_message_for_should do |actual|
-    "expctected #{MagicNumber.read(actual).inspect} to equal #{@expected.inspect}"
+    actual = MagicNumber.read(actual)
+    "expctected #{actual.inspect},#{actual.encoding} to equal #{@expected.inspect},#{@expected.encoding}"
   end
 end

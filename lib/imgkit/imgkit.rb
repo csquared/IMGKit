@@ -78,7 +78,7 @@ class IMGKit
       stdin << (@source.to_s) if @source.html?
       stdin.close
       result = stdout.gets(nil)
-      result.force_encoding("ASCII-8BIT") if result.respond_to? :encode
+      result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
       stderr_output = stderr.readlines.join
       stdout.close
       stderr.close
