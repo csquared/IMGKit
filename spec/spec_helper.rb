@@ -9,11 +9,33 @@ require 'rack'
 require 'tempfile'
 
 RSpec.configure do |config|
-  
   config.before do
     IMGKit.any_instance.stubs(:wkhtmltoimage).returns(
       File.join(SPEC_ROOT,'..','bin','wkhtmltoimage-proxy')
     )
   end
-  
+end
+
+module MagicNumber
+  extend self
+  JPG  = "\xFF\xD8\xFF\xE0".force_encoding("UTF-8")
+  JPEG = JPG
+  PNG  = "\x89\x50\x4e\x47".force_encoding("UTF-8")
+  TIFF = "\x49\x49\x2a\x00".force_encoding("UTF-8")
+  TIF  = TIFF
+  GIF  = "\x47\x49\x46\x38".force_encoding("UTF-8") 
+
+  def read(string)
+    string[0,4]
+  end
+end
+
+RSpec::Matchers.define :be_a do |expected|
+  match do |actual|
+    @expected = MagicNumber.const_get(expected.upcase)
+    MagicNumber.read(actual) == @expected
+  end
+  failure_message_for_should do |actual|
+    "expctected #{MagicNumber.read(actual).inspect} to equal #{@expected.inspect}"
+  end
 end

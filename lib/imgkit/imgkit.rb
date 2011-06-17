@@ -1,4 +1,5 @@
 class IMGKit
+  KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]
 
   class NoExecutableError < StandardError
     def initialize
@@ -22,6 +23,12 @@ class IMGKit
       super("Command failed: #{command}: #{stderr}")
     end
   end
+
+  class UnknownFormatError < StandardError
+    def initialize(format)
+      super("Unknown Format: #{format}")
+    end
+  end
   
   attr_accessor :source, :stylesheets
   attr_reader :options
@@ -33,14 +40,13 @@ class IMGKit
 
     @options = IMGKit.configuration.default_options.merge(options)
     @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
-    @options = normalize_options(@options)
     
     raise NoExecutableError.new unless File.exists?(IMGKit.configuration.wkhtmltoimage)
   end
   
   def command
     args = [executable]
-    args += @options.to_a.flatten.compact
+    args += normalize_options(@options).to_a.flatten.compact
     
     if @source.html?
       args << '-' # Get HTML from stdin
@@ -62,8 +68,9 @@ class IMGKit
     end
   end
   
-  def to_img
+  def to_img(format = nil)
     append_stylesheets
+    set_format(format)
 
     result = nil
     stderr_output = nil
@@ -81,7 +88,17 @@ class IMGKit
   end
   
   def to_file(path)
+    format = File.extname(path).gsub(/^\./,'').to_sym
+    set_format(format)
     File.open(path,'w') {|file| file << self.to_img}
+  end
+
+  def method_missing(name, *args, &block)
+    if(m = name.to_s.match(/^to_(\w+)/))
+      self.send(:to_img, m[1].to_sym)
+    else
+      super
+    end
   end
   
   protected
@@ -146,5 +163,10 @@ class IMGKit
         value.to_s
       end
     end
-  
+
+    def set_format(format)
+      format = IMGKit.configuration.default_format unless format
+      @options.merge!(:format => format.to_s) unless @options[:format]
+      raise UnknownFormatError.new(format) unless KNOWN_FORMATS.include?(@options[:format].to_sym)
+    end
 end

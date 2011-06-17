@@ -21,11 +21,6 @@ describe IMGKit do
       imgkit.source.to_s.should == file_path
     end
     
-    it "should parse the options into a cmd line friedly format" do
-      imgkit = IMGKit.new('html', :quality => 75)
-      imgkit.options.should have_key('--quality')
-    end
-    
     it "should provide no default options" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
       imgkit.options.should be_empty
@@ -49,13 +44,17 @@ describe IMGKit do
       imgkit.command[0].should include('wkhtmltoimage')
       imgkit.command.should include('-')
     end
+
+    it "should parse the options into a cmd line friedly format" do
+      imgkit = IMGKit.new('html', :quality => 75)
+      imgkit.command.should include('--quality')
+    end
     
     it "will not include default options it is told to omit" do
       imgkit = IMGKit.new('html')
       imgkit = IMGKit.new('html', :disable_smart_shrinking => false)
       imgkit.command.should_not include('--disable-smart-shrinking')
     end
-    
     it "should encapsulate string arguments in quotes" do
       imgkit = IMGKit.new('html', :header_center => "foo [page]")
       imgkit.command[imgkit.command.index('--header-center') + 1].should == 'foo [page]'
@@ -98,7 +97,7 @@ describe IMGKit do
     end
   end
   
-  context "#to_img" do
+  context "#to_img(format = nil)" do
     def filetype_of(img) 
       result = nil
       tmpfile = Tempfile.new('imgkit') 
@@ -153,6 +152,66 @@ describe IMGKit do
       imgkit = IMGKit.new('http://www.hopefully.this.site.never.exists.asjdhjkalshgflkahfsglkahfdlg11.com')
       lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
     end
+
+    context "when there is no format" do
+      it "should fallback to jpg" do
+        IMGKit.new("Hello, world").to_img.should be_a(:jpg)
+      end
+
+      context "when a default_format has been configured" do
+        before do
+          IMGKit.configure do |config|
+            config.default_format = :png
+          end
+        end
+
+        after do
+          IMGKit.configure do |config|
+            config.default_format = :jpg
+          end
+        end
+
+        it "should use the configured format" do
+          IMGKit.new("Oh hai!").to_img.should be_a(:png)
+        end
+      end
+    end
+
+    context "when format = :jpg" do
+      it "should create a jpg" do
+        IMGKit.new("Hello, world").to_img(:jpg).should be_a(:jpg)
+      end
+    end
+
+    context "when format is a known format" do
+      it "should create an image with that format" do
+        IMGKit::KNOWN_FORMATS.each do |format|
+          IMGKit.new("Hello, world").to_img(format).should be_a(format)
+        end
+      end
+    end
+
+    context "when format is unknown" do
+      it "should raise an UnknownFormatError" do
+        lambda { IMGKit.new("Hello, world").to_img(:blah) }.should raise_error(IMGKit::UnknownFormatError)
+      end
+    end
+  end
+
+  context "#to_<known_format>" do
+    IMGKit::KNOWN_FORMATS.each do |format|
+      describe "#to_#{format}" do
+        it "should create a #{format}" do
+          IMGKit.new("Hello").send("to_#{format}").should be_a(format)
+        end
+      end
+    end
+  end
+
+  context "#to_<unkown_format>" do
+    it "should raise and UnknownFormatError" do
+      lambda { IMGKit.new("Hello, world").to_blah }.should raise_error(IMGKit::UnknownFormatError)
+    end
   end
   
   context "#to_file" do
@@ -162,7 +221,7 @@ describe IMGKit do
     end
     
     after do
-      File.delete(@file_path)
+      File.delete(@file_path) if File.exist?(@file_path)
     end
     
     it "should create a file with the result of :to_img  as content" do
@@ -171,6 +230,29 @@ describe IMGKit do
       file = imgkit.to_file(@file_path)
       file.should be_instance_of(File)
       File.read(file.path).should == 'CONTENT'
+    end
+
+    IMGKit::KNOWN_FORMATS.each do |format|
+      it "should use the extension #{format} as the format" do
+        @file_path = File.join(SPEC_ROOT,'fixtures',"test.#{format}")
+        imgkit = IMGKit.new('html', :quality => 50)
+        file = imgkit.to_file(@file_path)
+        file.should be_instance_of(File)
+        File.read(file.path).should be_a(format)
+      end
+    end
+
+    it "should raise UnknownFormatError when format is unknown" do
+      kit = IMGKit.new("html")
+      lambda { 
+        kit.to_file("file.bad_format") 
+      }.should raise_error(IMGKit::UnknownFormatError)
+    end
+
+    it "should not create the file if format is unknown" do
+      kit = IMGKit.new("html")
+      kit.to_file("file.bad_format") rescue nil 
+      File.exist?("file.bad_format").should be_false
     end
   end
   

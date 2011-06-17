@@ -25,9 +25,17 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     
     # Get the image BLOB
     img = kit.to_img
-    
-    # Save the JPG to a file
+
+    # New in 1.3!
+    img = kit.to_img(:jpg)      #default
+    img = kit.to_img(:jpeg)     
+    img = kit.to_img(:png)
+    img = kit.to_img(:tif)
+    img = kit.to_img(:tiff)
+
+    # Save the image to a file
     file = kit.to_file('/path/to/save/file.jpg')
+    file = kit.to_file('/path/to/save/file.png')
     
     # IMGKit.new can optionally accept a URL or a File.
     # Stylesheets can not be added when source is provided as a URL of File.
@@ -35,11 +43,18 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     kit = IMGKit.new(File.new('/path/to/html'))
 
     # Add any kind of option through meta tags
-    IMGKit.new('<html><head><meta name="imgkit-quality" content="75")
+    IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
+
+    # Format shortcuts - New in 1.3!
+    IMGKit.new("hello").to_jpg       
+    IMGKit.new("hello").to_jpeg      
+    IMGKit.new("hello").to_png       
+    IMGKit.new("hello").to_tif       
+    IMGKit.new("hello").to_tiff      
     
 ## Configuration
 
-If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell PDFKit where the binary is. You can configure PDFKit like so:
+If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell IMGKit where the binary is. You can configure IMGKit like so:
 
     # config/initializers/imgkit.rb
     IMGKit.configure do |config|
@@ -47,8 +62,8 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
       config.default_options = {
         :quality => 60
       }
+      config.default_format = :png
     end
-
 
 ## Rails 
 
@@ -58,11 +73,31 @@ register a .jpg mime type in:
     #config/initializers/mime_type.rb
     Mime::Type.register       "image/jpeg", :jpg
 
+register a .png mime type in: 
+
+    #config/initializers/mime_type.rb
+    Mime::Type.register       "image/png", :png
+
 ### Controller Actions
-You can then send JPGs with
+You can respond in a controller with:
+
+    @kit = IMGKit.new(render_as_string)
 
     format.jpg do
-      send_data(@kit.to_img, :type => "image/jpeg", :disposition => 'inline')
+      send_data(@kit.to_jpg, :type => "image/jpeg", :disposition => 'inline')
+    end
+
+    - or -
+
+    format.png do
+      send_data(@kit.to_png, :type => "image/png", :disposition => 'inline')
+    end
+
+    - or -
+
+    respond_to do |format|
+      send_data(@kit.to_img(format.to_sym), 
+                :type => "image/png", :disposition => 'inline')
     end
 
 This allows you to take advantage of rails page caching so you only generate the
