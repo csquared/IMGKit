@@ -238,7 +238,7 @@ describe IMGKit do
         imgkit = IMGKit.new('html', :quality => 50)
         file = imgkit.to_file(@file_path)
         file.should be_instance_of(File)
-        File.read(file.path).should be_a(format)
+        File.open(file.path, "r:ASCII-8BIT") { |f| f.read.should be_a(format) }
       end
     end
 

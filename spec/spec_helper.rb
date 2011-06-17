@@ -18,15 +18,16 @@ end
 
 module MagicNumber
   extend self
-  JPG  = "\xFF\xD8\xFF\xE0" #.force_encoding("UTF-8")
+  JPG  = "\xFF\xD8\xFF\xE0"
   JPEG = JPG
-  PNG  = "\x89\x50\x4e\x47" #.force_encoding("UTF-8")
-  TIFF = "\x49\x49\x2a\x00" #.force_encoding("UTF-8")
+  PNG  = "\x89\x50\x4e\x47"
+  TIFF = "\x49\x49\x2a\x00"
   TIF  = TIFF
   GIF  = "\x47\x49\x46\x38"
 
-  if "".respond_to?(:force_encoding)
-    constants.each { |c| const_get(c).force_encoding("UTF-8")  }
+
+  if "".respond_to?(:force_encoding) 
+    constants.each { |c| const_get(c).force_encoding("ASCII-8BIT")  }
   end
 
   def read(string)

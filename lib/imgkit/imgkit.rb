@@ -78,6 +78,7 @@ class IMGKit
       stdin << (@source.to_s) if @source.html?
       stdin.close
       result = stdout.gets(nil)
+      result.force_encoding("ASCII-8BIT") if result.respond_to? :encode
       stderr_output = stderr.readlines.join
       stdout.close
       stderr.close
@@ -90,7 +91,7 @@ class IMGKit
   def to_file(path)
     format = File.extname(path).gsub(/^\./,'').to_sym
     set_format(format)
-    File.open(path,'w') {|file| file << self.to_img}
+    File.open(path,'w:ASCII-8BIT') {|file| file << self.to_img}
   end
 
   def method_missing(name, *args, &block)
