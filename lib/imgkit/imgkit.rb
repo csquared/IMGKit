@@ -124,7 +124,7 @@ class IMGKit
     end
   
     def style_tag_for(stylesheet)
-      "<style>#{File.read(stylesheet)}</style>"
+      "<style>#{stylesheet.respond_to?(:read) && stylesheet.read || File.read(stylesheet)}</style>"
     end
     
     def append_stylesheets

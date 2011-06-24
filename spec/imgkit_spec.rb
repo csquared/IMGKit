@@ -32,7 +32,7 @@ describe IMGKit do
     end
 =end
     
-    it "should not have any stylesheedt by default" do
+    it "should not have any stylesheet by default" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
       imgkit.stylesheets.should be_empty
     end
@@ -124,7 +124,7 @@ describe IMGKit do
       img = imgkit.to_img
       filetype_of(img).should include('JPEG')
     end
-    
+
     it "should have the stylesheet added to the head if it has one" do
       imgkit = IMGKit.new("<html><head></head><body>Hai!</body></html>")
       css = File.join(SPEC_ROOT,'fixtures','example.css')
@@ -132,7 +132,15 @@ describe IMGKit do
       imgkit.to_img
       imgkit.source.to_s.should include("<style>#{File.read(css)}</style>")
     end
-    
+
+    it "should accept stylesheet as an object which responds to #read" do
+      imgkit = IMGKit.new("<html><head></head><body>Hai!</body></html>")
+      css = StringIO.new( File.read(File.join(SPEC_ROOT,'fixtures','example.css')) )
+      imgkit.stylesheets << css
+      imgkit.to_img
+      imgkit.source.to_s.should include("<style>#{css.string}</style>")
+    end
+
     it "should prepend style tags if the HTML doesn't have a head tag" do
       imgkit = IMGKit.new("<html><body>Hai!</body></html>")
       css = File.join(SPEC_ROOT,'fixtures','example.css')

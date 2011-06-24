@@ -1,3 +1,29 @@
+# Patch Intention
+
+To overcome the lack of support for --user-style-sheet option by wkhtmltoimage 0.10.0 rc2 as reported here http://code.google.com/p/wkhtmltopdf/issues/detail?id=387
+
+      require 'imgkit'
+      require 'restclient'
+      require 'stringio'
+
+      url = 'http://domain/path/to/stylesheet.css'
+      css = StringIO.new( RestClient.get(url) )
+
+      kit = IMGKit.new(<<EOD)
+      <!DOCTYPE HTML>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>coolest converter</title>
+      </head>
+      <body>
+        <div class="cool">image kit</div>
+      </body>
+      </html>
+      EOD
+
+      kit.stylesheets << css
+
 # IMGKit
 
 Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/antialize/wkhtmltopdf) on the backend which renders HTML using Webkit.
