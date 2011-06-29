@@ -4,23 +4,32 @@ require 'optparse'
 require 'rbconfig'
 require 'open-uri'
 require 'imgkit/configuration'
+require 'imgkit/version'
+
+GOOGLE_CODE_URL = "http://code.google.com/p/wkhtmltopdf/downloads/list"
 
 def detect_architecture
-  case Config::CONFIG['arch']
+  case arch = Config::CONFIG['arch']
   when /x86_64-linux/i
     'amd64'
   when /linux/i
     'i386'
   when /darwin/i
-    'OS-X.i386'
+    'OSX'
   else
-    raise "No binaries found for your system. Please install wkhtmltoimage by hand."
+    cant_find_binaries(arch)
   end
 end
 
+def cant_find_binaries(arch)
+  puts "Sorry, I couldn't find the binary for your architecture (#{arch}) \n  at #{GOOGLE_CODE_URL}"
+  puts "Please go to that page, unzip the appropriate binary, and install"
+  exit(1)
+end
+
 def cleanup(install_to)
-  `rm -rf wkhtmltoimage*`
-  `rm #{install_to}`
+  `rm -rf wkhtmltoimage*` rescue nil
+  `rm #{install_to}` rescue nil
 end
 
 def download_wkhtmltoimage(arch)
@@ -28,8 +37,8 @@ def download_wkhtmltoimage(arch)
     download = "wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
     url = "http://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
   else
-    page = open("http://code.google.com/p/wkhtmltopdf/downloads/list").read
-    download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) || raise("File not found..")
+    page = open(GOOGLE_CODE_URL).read
+    download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) or cant_find_binaries(arch)
     download = download[1]
     url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
   end
@@ -43,7 +52,7 @@ def install(download, arch, install_to)
   puts "Installing #{download} to #{install_to}"
   if download =~ /.tar.bz2$/
     `sudo tar xjvf #{download}`
-    `sudo mv wkhtmltoimage-#{arch} #{install_to}`
+    `sudo mv wkhtmltoimage #{install_to}`
   elsif download =~ /.tar.lzma$/
     raise "couldn't extract archive: lzcat not found" unless system("which lzcat > /dev/null 2>/dev/null")
     puts "Warning: lzcat is broken on Ubuntu. Re-run with --use-bzip to install alternate version"
@@ -79,8 +88,7 @@ OptionParser.new do |parser|
 
   parser.on("--version", "Show Version.") do
     @command = Proc.new do
-      root = File.dirname(File.dirname(__FILE__))
-      puts File.read(File.join(root, 'VERSION'))
+      puts IMGKit::VERSION
     end
   end
 
