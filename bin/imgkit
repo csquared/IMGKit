@@ -6,7 +6,7 @@ require 'open-uri'
 require 'imgkit/configuration'
 require 'imgkit/version'
 
-GOOGLE_CODE_URL = "http://code.google.com/p/wkhtmltopdf/downloads/list"
+GOOGLE_CODE_URL = ENV['GOOGLE_CODE_URL'] || "http://code.google.com/p/wkhtmltopdf/downloads/list?can=1"
 
 def detect_architecture
   case arch = Config::CONFIG['arch']
