@@ -67,25 +67,49 @@ class IMGKit
       default.split('/').last
     end
   end
+
+  if Open3.method_defined? :capture3
+    def capture3(*opts)
+      Open3.capture3 *opts
+    end
+  else
+    # Lifted from ruby 1.9.2-p290 sources for ruby 1.8 compatibility
+    # and modified to work on 1.8
+    def capture3(*cmd, &block)
+      if Hash === cmd.last
+        opts = cmd.pop.dup
+      else
+        opts = {}
+      end
+
+      stdin_data = opts.delete(:stdin_data) || ''
+      binmode = opts.delete(:binmode)
+
+      Open3.popen3(*cmd) {|i, o, e|
+        if binmode
+          i.binmode
+          o.binmode
+          e.binmode
+        end
+        out_reader = Thread.new { o.read }
+        err_reader = Thread.new { e.read }
+        i.write stdin_data
+        i.close
+        [out_reader.value, err_reader.value]
+      }
+    end
+  end
   
   def to_img(format = nil)
     append_stylesheets
     set_format(format)
 
-    result = nil
-    stderr_output = nil
-    Open3.popen3(*command) do |stdin,stdout,stderr|
-      stdin << (@source.to_s) if @source.html?
-      stdin.close
-      result = stdout.gets(nil)
-      result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
-      stderr_output = stderr.readlines.join
-      stdout.close
-      stderr.close
-    end
+    opts = @source.html? ? {:stdin_data => @source.to_s} : {}
+    result, stderr = capture3(*(command + [opts]))
+    result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
     
-    raise CommandFailedError.new(command.join(' '), stderr_output)  unless result
-    return result
+    raise CommandFailedError.new(command.join(' '), stderr) if result.size == 0
+    result
   end
   
   def to_file(path)

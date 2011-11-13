@@ -156,11 +156,21 @@ describe IMGKit do
       lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
     end
 
+    def set_wkhtmltoimage_binary(binary)
+      spec_dir = File.dirname(__FILE__)
+      IMGKit.configuration.should_receive(:wkhtmltoimage).at_least(1).times.and_return(File.join(spec_dir, binary))
+    end
+
     it "should throw an error if the wkhtmltoimage command fails" do
-                                    #stdin        #stdout       #stderr
-      Open3.stub(:popen3).and_yield(StringIO.new, StringIO.new, StringIO.new("This failed, dude"))
+      set_wkhtmltoimage_binary 'error_binary'
       imgkit = IMGKit.new('http://www.example.com')
       lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
+    end
+
+    it "should be able to handle lots of error output" do
+      set_wkhtmltoimage_binary 'warning_binary'
+      imgkit = IMGKit.new("<html><body>Hai!</body></html>")
+      imgkit.to_img.should == "result\n"
     end
 
     context "when there is no format" do

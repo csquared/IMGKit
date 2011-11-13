@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for i in {1..1000}; do
+   echo "Some kind of a long error message so that the operating system buffer gets filled" > /dev/stderr
+done
+
+echo "result"
