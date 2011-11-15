@@ -1,28 +1,3 @@
-# Patch Intention
-
-To overcome the lack of support for --user-style-sheet option by wkhtmltoimage 0.10.0 rc2 as reported here http://code.google.com/p/wkhtmltopdf/issues/detail?id=387
-
-      require 'imgkit'
-      require 'restclient'
-      require 'stringio'
-
-      url = 'http://domain/path/to/stylesheet.css'
-      css = StringIO.new( RestClient.get(url) )
-
-      kit = IMGKit.new(<<EOD)
-      <!DOCTYPE HTML>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <title>coolest converter</title>
-      </head>
-      <body>
-        <div class="cool">image kit</div>
-      </body>
-      </html>
-      EOD
-
-      kit.stylesheets << css
 
 # IMGKit
 
@@ -128,6 +103,32 @@ You can respond in a controller with:
 
 This allows you to take advantage of rails page caching so you only generate the
 image when you need to.
+
+## --user-style-sheet workaround
+To overcome the lack of support for --user-style-sheet option by wkhtmltoimage 0.10.0 rc2 as reported here http://code.google.com/p/wkhtmltopdf/issues/detail?id=387
+
+      require 'imgkit'
+      require 'restclient'
+      require 'stringio'
+
+      url = 'http://domain/path/to/stylesheet.css'
+      css = StringIO.new( RestClient.get(url) )
+
+      kit = IMGKit.new(<<EOD)
+      <!DOCTYPE HTML>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>coolest converter</title>
+      </head>
+      <body>
+        <div class="cool">image kit</div>
+      </body>
+      </html>
+      EOD
+
+      kit.stylesheets << css
+
 
 ## Note on Patches/Pull Requests
  
