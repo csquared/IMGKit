@@ -73,12 +73,11 @@ to your git repo.  I like to put mine in "./bin/wkhtmltoimage-amd64"
 
 assuming its in that location you can just do: 
 
-    ```ruby
     IMGKit.configure do |config|
-      config.wkhtmltoimage = "./bin/wkhtmltoimage-amd64' if ENV['RACK_ENV'] == 'production'
+      config.wkhtmltoimage = Rails.root.join('bin', 'wkhtmltoimage-amd64').to_s if ENV['RACK_ENV'] == 'production'
     end
-    ```
 
+If you're not using Rails just replace Rails.root with the root dir of your app.
 
 
 ## Rails 
