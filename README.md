@@ -66,6 +66,21 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
       config.default_format = :png
     end
 
+## Heroku
+
+get a version of `wkhtmltoimage` as an amd64 binary and commit it  
+to your git repo.  I like to put mine in "./bin/wkhtmltoimage-amd64"
+
+assuming its in that location you can just do: 
+
+    ```ruby
+    IMGKit.configure do |config|
+      config.wkhtmltoimage = "./bin/wkhtmltoimage-amd64' if ENV['RACK_ENV'] == 'production'
+    end
+    ```
+
+
+
 ## Rails 
 
 ### Mime Types
