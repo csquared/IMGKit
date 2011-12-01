@@ -96,7 +96,7 @@ register a .png mime type in:
 ### Controller Actions
 You can respond in a controller with:
 
-    @kit = IMGKit.new(render_as_string)
+    @kit = IMGKit.new(render_to_string)
 
     format.jpg do
       send_data(@kit.to_jpg, :type => "image/jpeg", :disposition => 'inline')
