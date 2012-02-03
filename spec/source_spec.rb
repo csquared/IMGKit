@@ -17,6 +17,11 @@ describe IMGKit::Source do
       source = IMGKit::Source.new('<blink>Oh Hai!</blink>')
       source.should_not be_url
     end
+
+    it "should return false if passed HTML with a line starting with 'http'" do
+      source = IMGKit::Source.new("<blink>Oh Hai!</blink>\nhttp://google.com")
+      source.should_not be_url
+    end
   end
   
   describe "#file?" do
