@@ -76,7 +76,7 @@ OptionParser.new do |parser|
   parser.on("--install-wkhtmltoimage", "Install wkhtmltoimage binaries (TO=/usr/local/bin ARCHITECTURE=i386)") do
     @command = Proc.new do
       architecture = ENV['ARCHITECTURE'] || detect_architecture
-      install_to = ENV['TO']+'wkhtmltoimage' || IMGKit.configuration.wkhtmltoimage
+      install_to = ENV['TO']+'/wkhtmltoimage' || IMGKit.configuration.wkhtmltoimage
       
       Dir.chdir '/tmp'
       
