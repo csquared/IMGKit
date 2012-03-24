@@ -52,7 +52,7 @@ def install(download, arch, install_to)
   puts "Installing #{download} to #{install_to}"
   if download =~ /.tar.bz2$/
     `sudo tar xjvf #{download}`
-    `sudo mv wkhtmltoimage #{install_to}`
+    `sudo mv wkhtmltoimage-#{arch} #{install_to}`
   elsif download =~ /.tar.lzma$/
     raise "couldn't extract archive: lzcat not found" unless system("which lzcat > /dev/null 2>/dev/null")
     puts "Warning: lzcat is broken on Ubuntu. Re-run with --use-bzip to install alternate version"
@@ -76,7 +76,7 @@ OptionParser.new do |parser|
   parser.on("--install-wkhtmltoimage", "Install wkhtmltoimage binaries (TO=/usr/local/bin ARCHITECTURE=i386)") do
     @command = Proc.new do
       architecture = ENV['ARCHITECTURE'] || detect_architecture
-      install_to = ENV['TO'] || IMGKit.configuration.wkhtmltoimage
+      install_to = ENV['TO']+'/wkhtmltoimage' || IMGKit.configuration.wkhtmltoimage
       
       Dir.chdir '/tmp'
       
