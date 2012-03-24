@@ -143,6 +143,28 @@ To overcome the lack of support for --user-style-sheet option by wkhtmltoimage 0
 
       kit.stylesheets << css
 
+## CarrierWave Workaround
+
+Contributed by @ticktricktrack
+
+```ruby
+  class MyClass < ActiveRecord::Base
+    mount_uploader :snapshot, SnapshotUploader
+
+    after_create :take_snapshot
+
+    # private
+
+    def take_snapshot
+      file = Tempfile.new(["template_#{self.id.to_s}", 'jpg'], 'tmp', :encoding => 'ascii-8bit')
+      file.write(IMGKit.new(self.html_body, quality: 50, width: 600).to_jpg)
+      self.snapshot = file
+      file.unlink
+      self.save
+    end
+  end
+```
+
 
 ## Note on Patches/Pull Requests
  
