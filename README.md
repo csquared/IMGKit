@@ -161,15 +161,16 @@ Controller:
 
 ```ruby
 def upload_image
-   html = render_to_string
-   kit  = IMGKit.new(html)
-   img  = kit.to_img(:png)
-   file = Tempfile.new(["template_#{model.id}", 'png'], 'tmp',
-                        :encoding => 'ascii-8bit')
+   model = Model.find(params[:id])
+   html  = render_to_string
+   kit   = IMGKit.new(html)
+   img   = kit.to_img(:png)
+   file  = Tempfile.new(["template_#{model.id}", 'png'], 'tmp',
+                         :encoding => 'ascii-8bit')
    file.write(img)
    file.flush
-   non_profit.snapshot = file
-   non_profit.save
+   model.snapshot = file
+   model.save
    file.unlink
 end
 ```
