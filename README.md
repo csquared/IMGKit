@@ -12,24 +12,24 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     gem install imgkit
 
 ### wkhtmltoimage
- * **Automatic**: `sudo imgkit --install-wkhtmltoimage`  
- install latest version into /usr/local/bin  
+ * **Automatic**: `sudo imgkit --install-wkhtmltoimage`
+ install latest version into /usr/local/bin
  (overwrite defaults with e.g. ARCHITECTURE=amd64 TO=/home/foo/bin)
  * By hand: http://code.google.com/p/wkhtmltopdf/downloads/list
 
 ## Usage
-    
+
     # IMGKit.new takes the HTML and any options for wkhtmltoimage
     # run `wkhtmltoimage --extended-help` for a full list of options
     kit = IMGKit.new(html, :quality => 50)
     kit.stylesheets << '/path/to/css/file'
-    
+
     # Get the image BLOB
     img = kit.to_img
 
     # New in 1.3!
     img = kit.to_img(:jpg)      #default
-    img = kit.to_img(:jpeg)     
+    img = kit.to_img(:jpeg)
     img = kit.to_img(:png)
     img = kit.to_img(:tif)
     img = kit.to_img(:tiff)
@@ -37,7 +37,7 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     # Save the image to a file
     file = kit.to_file('/path/to/save/file.jpg')
     file = kit.to_file('/path/to/save/file.png')
-    
+
     # IMGKit.new can optionally accept a URL or a File.
     # Stylesheets can not be added when source is provided as a URL of File.
     kit = IMGKit.new('http://google.com')
@@ -47,12 +47,14 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
 
     # Format shortcuts - New in 1.3!
-    IMGKit.new("hello").to_jpg       
-    IMGKit.new("hello").to_jpeg      
-    IMGKit.new("hello").to_png       
-    IMGKit.new("hello").to_tif       
-    IMGKit.new("hello").to_tiff      
-    
+    IMGKit.new("hello").to_jpg
+    IMGKit.new("hello").to_jpeg
+    IMGKit.new("hello").to_png
+    IMGKit.new("hello").to_tif
+    IMGKit.new("hello").to_tiff
+
+    Note: Ruby's buffered I/O means that if you want to write the string data to a file or tempfile make sure to call `#flush` to ensure the contents don't get stuck in the buffer.
+
 ## Configuration
 
 If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell IMGKit where the binary is. You can configure IMGKit like so:
@@ -68,10 +70,10 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
 
 ## Heroku
 
-get a version of `wkhtmltoimage` as an amd64 binary and commit it  
+get a version of `wkhtmltoimage` as an amd64 binary and commit it
 to your git repo.  I like to put mine in "./bin/wkhtmltoimage-amd64"
 
-assuming its in that location you can just do: 
+assuming its in that location you can just do:
 
     IMGKit.configure do |config|
       config.wkhtmltoimage = Rails.root.join('bin', 'wkhtmltoimage-amd64').to_s if ENV['RACK_ENV'] == 'production'
@@ -80,15 +82,15 @@ assuming its in that location you can just do:
 If you're not using Rails just replace Rails.root with the root dir of your app.
 
 
-## Rails 
+## Rails
 
 ### Mime Types
-register a .jpg mime type in: 
+register a .jpg mime type in:
 
     #config/initializers/mime_type.rb
     Mime::Type.register       "image/jpeg", :jpg
 
-register a .png mime type in: 
+register a .png mime type in:
 
     #config/initializers/mime_type.rb
     Mime::Type.register       "image/png", :png
@@ -111,7 +113,7 @@ You can respond in a controller with:
     - or -
 
     respond_to do |format|
-      send_data(@kit.to_img(format.to_sym), 
+      send_data(@kit.to_img(format.to_sym),
                 :type => "image/png", :disposition => 'inline')
     end
 
@@ -143,6 +145,37 @@ To overcome the lack of support for --user-style-sheet option by wkhtmltoimage 0
 
       kit.stylesheets << css
 
+## Paperclip Example
+
+Model:
+
+```ruby
+class Model < ActiveRecord::Base
+  # attr_accessible :title, :body
+   has_attached_file :snapshot, :storage => :s3,
+        :s3_credentials => "#{Rails.root}/config/s3.yml"
+end
+```
+
+Controller:
+
+```ruby
+def upload_image
+   html = render_to_string
+   kit  = IMGKit.new(html)
+   img  = kit.to_img(:png)
+   file = Tempfile.new(["template_#{model.id}", 'png'], 'tmp',
+                        :encoding => 'ascii-8bit')
+   file.write(img)
+   file.flush
+   non_profit.snapshot = file
+   non_profit.save
+   file.unlink
+end
+```
+
+
+
 ## CarrierWave Workaround
 
 Contributed by @ticktricktrack
@@ -158,16 +191,17 @@ Contributed by @ticktricktrack
     def take_snapshot
       file = Tempfile.new(["template_#{self.id.to_s}", 'jpg'], 'tmp', :encoding => 'ascii-8bit')
       file.write(IMGKit.new(self.html_body, quality: 50, width: 600).to_jpg)
+      file.flush
       self.snapshot = file
-      file.unlink
       self.save
+      file.unlink
     end
   end
 ```
 
 
 ## Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Setup your development environment with: gem install bundler; bundle install
 * Make your feature addition or bug fix.
@@ -180,5 +214,5 @@ Contributed by @ticktricktrack
 ## Copyright
 
 Copyright (c) 2010 <a href="mailto:christopher.continanza@gmail.com">Chris Continanza</a>
-Based on work by Jared Pace  
+Based on work by Jared Pace
 See LICENSE for details.
