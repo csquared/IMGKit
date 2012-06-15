@@ -73,6 +73,10 @@ If you're on Windows or you installed wkhtmltoimage by hand to a location other 
 get a version of `wkhtmltoimage` as an amd64 binary and commit it
 to your git repo.  I like to put mine in "./bin/wkhtmltoimage-amd64"
 
+<a href="http://code.google.com/p/wkhtmltopdf/downloads/detail?name=wkhtmltoimage-0.10.0_rc2-static-amd64.tar.bz2&can=1&q=amd64">
+version 0.10.0 has worked best for me
+</a>
+
 assuming its in that location you can just do:
 
     IMGKit.configure do |config|
