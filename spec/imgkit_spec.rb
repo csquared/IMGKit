@@ -22,9 +22,14 @@ describe IMGKit do
     end
 
     it "should provide no default options" do
-      imgkit = IMGKit.new('<h1>Oh Hai</h1>')
-      imgkit.options.should be_empty
     end
+
+    it "should set a default height" do
+      imgkit = IMGKit.new('<h1>Oh Hai</h1>')
+      imgkit.options.length.should be 1
+      imgkit.options[:height].should be 1000
+    end
+
 
 =begin
     it "should default to 'UTF-8' encoding" do

@@ -8,7 +8,7 @@ class IMGKit
       super(msg)
     end
   end
-  
+
   class ImproperSourceError < StandardError
     def initialize(msg)
       super("Improper Source: #{msg}")
@@ -29,31 +29,31 @@ class IMGKit
       super("Unknown Format: #{format}")
     end
   end
-  
+
   attr_accessor :source, :stylesheets
   attr_reader :options
-  
+
   def initialize(url_file_or_html, options = {})
     @source = Source.new(url_file_or_html)
-    
+
     @stylesheets = []
 
     @options = IMGKit.configuration.default_options.merge(options)
     @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
-    
+
     raise NoExecutableError.new unless File.exists?(IMGKit.configuration.wkhtmltoimage)
   end
-  
+
   def command
     args = [executable]
     args += normalize_options(@options).to_a.flatten.compact
-    
+
     if @source.html?
       args << '-' # Get HTML from stdin
     else
       args << @source.to_s
     end
-    
+
     args << '-' # Read IMG from stdout
     args
   end
@@ -99,7 +99,7 @@ class IMGKit
       }
     end
   end
-  
+
   def to_img(format = nil)
     append_stylesheets
     set_format(format)
@@ -107,11 +107,11 @@ class IMGKit
     opts = @source.html? ? {:stdin_data => @source.to_s} : {}
     result, stderr = capture3(*(command + [opts]))
     result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
-    
+
     raise CommandFailedError.new(command.join(' '), stderr) if result.size == 0
     result
   end
-  
+
   def to_file(path)
     format = File.extname(path).gsub(/^\./,'').to_sym
     set_format(format)
@@ -125,7 +125,7 @@ class IMGKit
       super
     end
   end
-  
+
   protected
 
     def find_options_in_meta(body)
@@ -146,14 +146,14 @@ class IMGKit
     rescue # rexml random crash on invalid xml
       []
     end
-  
+
     def style_tag_for(stylesheet)
       "<style>#{stylesheet.respond_to?(:read) ? stylesheet.read : File.read(stylesheet)}</style>"
     end
-    
+
     def append_stylesheets
       raise ImproperSourceError.new('Stylesheets may only be added to an HTML source') if stylesheets.any? && !@source.html?
-      
+
       stylesheets.each do |stylesheet|
         if @source.to_s.match(/<\/head>/)
           @source.to_s.gsub!(/(<\/head>)/, style_tag_for(stylesheet)+'\1')
@@ -162,7 +162,7 @@ class IMGKit
         end
       end
     end
-  
+
     def normalize_options(options)
       normalized_options = {}
 
@@ -173,11 +173,11 @@ class IMGKit
       end
       normalized_options
     end
-    
+
     def normalize_arg(arg)
       arg.to_s.downcase.gsub(/[^a-z0-9]/,'-')
     end
-    
+
     def normalize_value(value)
       case value
       when TrueClass

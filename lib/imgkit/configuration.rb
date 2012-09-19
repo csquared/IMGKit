@@ -5,7 +5,7 @@ class IMGKit
     def initialize
       @meta_tag_prefix = 'imgkit-'
       @wkhtmltoimage   = '/usr/local/bin/wkhtmltoimage'
-      @default_options = {}
+      @default_options = {:height => 1000}
       @default_format  = :jpg
     end
   end
@@ -21,14 +21,14 @@ class IMGKit
   #   IMGKit.configure do |config|
   #     config.wkhtmltoimage = '/usr/bin/wkhtmltoimage'
   #   end
-  
+
   def self.configuration
     @configuration ||= Configuration.new
   end
-  
-  
+
+
   def self.configure
-    self.configuration 
+    self.configuration
     yield(configuration)
   end
 end
