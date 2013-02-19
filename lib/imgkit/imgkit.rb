@@ -68,47 +68,52 @@ class IMGKit
     end
   end
 
-  if Open3.method_defined? :capture3
-    def capture3(*opts)
-      Open3.capture3 *opts
-    end
-  else
-    # Lifted from ruby 1.9.2-p290 sources for ruby 1.8 compatibility
-    # and modified to work on 1.8
-    def capture3(*cmd, &block)
-      if Hash === cmd.last
-        opts = cmd.pop.dup
-      else
-        opts = {}
-      end
+  def run_with_timeout(*command, timeout, tick)
+    output = ''
+    begin
+      # Start task in another thread, which spawns a process
+      stdin, stdout, stderr, thread = Open3.popen3(*command)
+      # Get the pid of the spawned process
+      pid = thread[:pid]
+      start = Time.now
 
-      stdin_data = opts.delete(:stdin_data) || ''
-      binmode = opts.delete(:binmode)
-
-      Open3.popen3(*cmd) {|i, o, e|
-        if binmode
-          i.binmode
-          o.binmode
-          e.binmode
+      while (Time.now - start) < timeout and thread.alive?
+        # Wait up to `tick` seconds for output/error data
+        Kernel.select([stdout], nil, nil, tick)
+        # Try to read the data
+        begin
+          output << stdout.read_nonblock(1024)
+        rescue IO::WaitReadable
+          # A read would block, so loop around for another select
+        rescue EOFError
+          # Command has completed, not really an error...
+          break
         end
-        out_reader = Thread.new { o.read }
-        err_reader = Thread.new { e.read }
-        i.write stdin_data
-        i.close
-        [out_reader.value, err_reader.value]
-      }
+      end
+      # Give Ruby time to clean up the other thread
+      sleep 1
+
+      if thread.alive?
+        # We need to kill the process, because killing the thread leaves
+        # the process alive but detached, annoyingly enough.
+        Process.kill("TERM", pid)
+      end
+    ensure
+      stdin.close if stdin
+      stderr.close if stderr
+      stdout.close if stdout
     end
+    return output
   end
 
   def to_img(format = nil)
     append_stylesheets
     set_format(format)
 
-    opts = @source.html? ? {:stdin_data => @source.to_s} : {}
-    result, stderr = capture3(*(command + [opts]))
+    result = run_with_timeout(*(command), IMGKit.configuration.default_timeout ,5)
     result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
 
-    raise CommandFailedError.new(command.join(' '), stderr) if result.size == 0
+    raise CommandFailedError.new(command.join(' '), '') if result.size == 0
     result
   end
 
