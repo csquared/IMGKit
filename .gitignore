@@ -3,3 +3,4 @@ pkg/*
 .bundle
 test.sh
 .rvmrc
+vendor
