@@ -68,7 +68,7 @@ class IMGKit
     end
   end
 
-  if Open3.method_defined? :capture3
+  if Open3.respond_to? :capture3
     def capture3(*opts)
       Open3.capture3 *opts
     end
