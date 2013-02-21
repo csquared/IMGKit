@@ -1,3 +1,4 @@
+
 # IMGKit
 
 Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/antialize/wkhtmltopdf) on the backend which renders HTML using Webkit.
@@ -56,48 +57,16 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
 
 ## Configuration
 
-### `wkhtmltoimage` binary location
-
-If you're on Windows or you installed `wkhtmltoimage` by hand to a location other than `/usr/local/bin` you will need to tell IMGKit where the binary is. You can configure IMGKit like so:
+If you're on Windows or you installed wkhtmltoimage by hand to a location other than /usr/local/bin you will need to tell IMGKit where the binary is. You can configure IMGKit like so:
 
     # config/initializers/imgkit.rb
     IMGKit.configure do |config|
       config.wkhtmltoimage = '/path/to/wkhtmltoimage'
-    end
-
-### Default image format
-
-May be set to one of [`IMGKit::KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]`](https://github.com/csquared/IMGKit/blob/d3755e2c23ba605da2f41e17f3edc99f3037d1c7/lib/imgkit/imgkit.rb#L2)
-
-      config.default_format = :png
-    
-### Prefix for `<meta>` tag options (see **Usage**) :
-
-May be changed from its default (`imgkit-`):
-
-      config.meta_tag_prefix = 'imgkit-option'
-
-### Additional default options
-
-Any flag accepted by `wkhtmltoimage` may be set thus:
-
       config.default_options = {
         :quality => 60
       }
-    
-For a flag which takes no parameters, use `true` for the value:
-
-        'no-images' => true
-
-For flags with multiple parameters, use an array:
-
-        :cookie => ['my_session', '123BADBEEF456']
-
-### Overriding options
-
-When initializing an `IMGKit` options may be may be set for the life time of the `IMGKit` object:
-
-    IMGKit.new('http://example.com/form', :post => ['my_field', 'my_unique_value'])
+      config.default_format = :png
+    end
 
 ## Heroku
 
