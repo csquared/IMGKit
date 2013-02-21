@@ -85,7 +85,7 @@ class IMGKit
       stdin_data = opts.delete(:stdin_data) || ''
       binmode = opts.delete(:binmode)
 
-      Open3.popen3(*cmd) {|i, o, e|
+      Open3.popen3(*cmd) {|i, o, e, wait_thr|
         if binmode
           i.binmode
           o.binmode
@@ -95,7 +95,7 @@ class IMGKit
         err_reader = Thread.new { e.read }
         i.write stdin_data
         i.close
-        [out_reader.value, err_reader.value]
+        [out_reader.value, err_reader.value, wait_thr.value]
       }
     end
   end
@@ -105,10 +105,10 @@ class IMGKit
     set_format(format)
 
     opts = @source.html? ? {:stdin_data => @source.to_s} : {}
-    result, stderr = capture3(*(command + [opts]))
+    result, stderr, status = capture3(*(command + [opts]))
     result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
 
-    raise CommandFailedError.new(command.join(' '), stderr) if result.size == 0
+    raise CommandFailedError.new(command.join(' '), stderr) unless status.success?
     result
   end
 
