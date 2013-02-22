@@ -4,9 +4,10 @@ class IMGKit
 
     def initialize
       @meta_tag_prefix = 'imgkit-'
-      @wkhtmltoimage   = '/usr/local/bin/wkhtmltoimage'
       @default_options = {:height => 1000}
       @default_format  = :jpg
+      @wkhtmltoimage ||= (defined?(Bundler::GemfileError) ? `bundle exec which wkhtmltoimage` : `which wkhtmltoimage`).chomp
+      @wkhtmltoimage = '/usr/local/bin/wkhtmltoimage' if @wkhtmltoimage.strip.empty?  # Fallback
     end
   end
 
