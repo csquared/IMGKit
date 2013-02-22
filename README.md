@@ -70,7 +70,7 @@ If you're on Windows or you installed `wkhtmltoimage` by hand to a location othe
 May be set to one of [`IMGKit::KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]`](https://github.com/csquared/IMGKit/blob/d3755e2c23ba605da2f41e17f3edc99f3037d1c7/lib/imgkit/imgkit.rb#L2)
 
       config.default_format = :png
-    
+
 ### Prefix for `<meta>` tag options (see **Usage**) :
 
 May be changed from its default (`imgkit-`):
@@ -84,7 +84,7 @@ Any flag accepted by `wkhtmltoimage` may be set thus:
       config.default_options = {
         :quality => 60
       }
-    
+
 For a flag which takes no parameters, use `true` for the value:
 
         'no-images' => true
@@ -246,6 +246,23 @@ Contributed by @ticktricktrack
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
+
+## Testing
+
+Make sure the tests pass in the following ruby versions:
+
+  - 1.8.7-p370
+  - 1.9.2-p290
+  - 1.9.3-p194
+
+You can simply
+
+    $ rbenv-install <version>
+    $ rbenv shell <version>
+    $ bundle
+    $ bundle exec rake
+
+For each version
 
 ## Copyright
 
