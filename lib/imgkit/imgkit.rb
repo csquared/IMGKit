@@ -70,7 +70,13 @@ class IMGKit
 
   if Open3.respond_to? :capture3
     def capture3(*opts)
-      Open3.capture3 *opts
+      Timeout.timeout(30) do
+        Timeout.timeout(30) do
+          Open3.capture3 *opts
+        end
+      end
+    rescue Timeout::Error
+      ""
     end
   else
     # Lifted from ruby 1.9.2-p290 sources for ruby 1.8 compatibility
