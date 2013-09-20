@@ -29,6 +29,11 @@ describe IMGKit::Source do
       source = IMGKit::Source.new(File.new(__FILE__))
       source.should be_file
     end
+
+    it "should return true if passed a temporary file" do
+      source = IMGKit::Source.new(Tempfile.new 'temp_file')
+      source.should be_file
+    end
     
     it "should return false if passed a url like string" do
       source = IMGKit::Source.new('http://google.com')
