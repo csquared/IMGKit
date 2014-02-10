@@ -5,15 +5,21 @@ require 'rbconfig'
 require 'open-uri'
 require 'imgkit/configuration'
 require 'imgkit/version'
+require 'json'
 
 GOOGLE_CODE_URL = ENV['GOOGLE_CODE_URL'] || "http://code.google.com/p/wkhtmltopdf/downloads/list?can=1"
 
+#https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.0/wkhtmltox-win32_0.12.0-03c001d.exe
+#https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.0/wkhtmltox-win64_0.12.0-03c001d.exe
+#https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.0/wkhtmltox-linux-i386_0.12.0-03c001d.tar.xz
+
+
 def detect_architecture
-  case arch = Config::CONFIG['arch']
+  case arch = RbConfig::CONFIG['arch']
   when /x86_64-linux/i
-    'amd64'
+    'linux-amd64'
   when /linux/i
-    'i386'
+    'linux-i386'
   when /darwin/i
     'OSX'
   else
@@ -27,37 +33,48 @@ def cant_find_binaries(arch)
   exit(1)
 end
 
-def cleanup(install_to)
-  `rm -rf wkhtmltoimage*` rescue nil
-  `rm #{install_to}` rescue nil
-end
+GITHUB_API='application/vnd.github.v3+json'
+GITHUB_RELEASES='https://api.github.com/repos/wkhtmltopdf/wkhtmltopdf/releases'
 
-def download_wkhtmltoimage(arch)
-  if ENV['BZIP'] 
-    download = "wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
-    url = "http://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
-  else
-    page = open(GOOGLE_CODE_URL).read
-    download = page.match(/href=".*name=(.*wkhtmltoimage-.*#{arch}.*?)&/) or cant_find_binaries(arch)
-    download = download[1]
-    url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
+def get_releases
+  releases = JSON.load(open(GITHUB_RELEASES, {'Accept' => GITHUB_API}))
+
+  # Pluck out just the field we need
+  releases.map do |r|
+    { 'name'   => r['name'],
+      'assets' => r['assets'].map do |a|
+        { 'name' => a['name'], 'url' => a['url'] }
+      end
+    }
   end
-  puts "Downloading #{download} from #{url}"
-  
-  `curl #{url} > #{download}`
-  download
 end
 
-def install(download, arch, install_to)
+def find_asset(releases, architecture)
+  asset = nil
+  release = releases.find do |r|
+    asset = r['assets'].find do |a|
+      puts "Checking if #{a['name']} =~ #{architecture}"
+      a['name'] =~ Regexp.new(architecture)
+    end
+  end
+  [ release, asset ]
+end
+
+def download_asset(asset)
+  filename = File.basename(asset['name'])
+  puts "Fetching #{asset['url']} to #{filename}..."
+  File.open(filename, 'w') do |f|
+    f.write(open(asset['url'], {'Accept' => 'application/octet-stream'}).read)
+  end
+  puts "Finished downloading!"
+  filename
+end
+
+def install(download, install_to)
   puts "Installing #{download} to #{install_to}"
   if download =~ /.tar.bz2$/
-    `tar xjvf #{download}`
+    `tar xvf #{download}`
     `mv wkhtmltoimage #{install_to}`
-  elsif download =~ /.tar.lzma$/
-    raise "couldn't extract archive: lzcat not found" unless system("which lzcat > /dev/null 2>/dev/null")
-    puts "Warning: lzcat is broken on Ubuntu. Re-run with --use-bzip to install alternate version"
-    `lzcat #{download} | tar x`
-    `mv wkhtmltoimage-#{arch} #{install_to}`
   else
     `mv #{download} #{install_to}`
   end
@@ -69,20 +86,23 @@ end
 OptionParser.new do |parser|
   parser.banner = "IMGKit\n\nOptions are:"
 
-  parser.on("--use-bzip", "Force bzip download for Ubuntu because lzcat is broken") do
-    ENV['BZIP'] = 'true'
-  end
-
   parser.on("--install-wkhtmltoimage", "Install wkhtmltoimage binaries (TO=/usr/local/bin ARCHITECTURE=i386)") do
     @command = Proc.new do
       architecture = ENV['ARCHITECTURE'] || detect_architecture
       install_to = ENV['TO'] ? ENV['TO']+'/wkhtmltoimage' : IMGKit.configuration.wkhtmltoimage
-      
+
       Dir.chdir '/tmp'
-      
-      cleanup(install_to)
-      download = download_wkhtmltoimage(architecture)
-      install(download, architecture, install_to)
+      releases = get_releases
+      puts "Available releases: #{releases.map {|r| r['name']}.join(', ')}"
+      release, asset = find_asset(releases, architecture)
+      if asset
+        puts "Found a build of #{release['name']} for our platform: #{asset['name']}"
+        file = download_asset(asset)
+        # TODO install(file, to)
+      else
+        puts "Could not find a release built for our architecture!"
+        exit 1
+      end
     end
   end
 
