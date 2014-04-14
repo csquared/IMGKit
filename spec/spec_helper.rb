@@ -6,7 +6,6 @@ require 'rspec'
 require 'rspec/autorun'
 require 'mocha'
 require 'rack'
-require 'tempfile'
 
 RSpec.configure do |config|
   config.before do
@@ -26,7 +25,7 @@ module MagicNumber
   GIF  = "\x47\x49\x46\x38"
 
 
-  if "".respond_to?(:force_encoding) 
+  if "".respond_to?(:force_encoding)
     constants.each { |c| const_get(c).force_encoding("ASCII-8BIT")  }
   end
 
