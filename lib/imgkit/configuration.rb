@@ -5,7 +5,7 @@ class IMGKit
 
     def initialize
       @meta_tag_prefix = 'imgkit-'
-      @default_options = {:height => 1000}
+      @default_options = {:height => 0}
       @default_format  = :jpg
     end
 
