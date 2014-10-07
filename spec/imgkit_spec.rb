@@ -27,7 +27,7 @@ describe IMGKit do
     it "should set a default height" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
       imgkit.options.length.should be 1
-      imgkit.options[:height].should be 1000
+      imgkit.options[:height].should be 0
     end
 
 
