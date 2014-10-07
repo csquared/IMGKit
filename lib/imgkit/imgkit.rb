@@ -1,5 +1,5 @@
 class IMGKit
-  KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]
+  KNOWN_FORMATS = [:jpg, :jpeg, :png]
 
   class NoExecutableError < StandardError
     def initialize

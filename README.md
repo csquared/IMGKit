@@ -30,8 +30,6 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     img = kit.to_img(:jpg)      #default
     img = kit.to_img(:jpeg)
     img = kit.to_img(:png)
-    img = kit.to_img(:tif)
-    img = kit.to_img(:tiff)
 
     # Save the image to a file
     file = kit.to_file('/path/to/save/file.jpg')
@@ -49,8 +47,6 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     IMGKit.new("hello").to_jpg
     IMGKit.new("hello").to_jpeg
     IMGKit.new("hello").to_png
-    IMGKit.new("hello").to_tif
-    IMGKit.new("hello").to_tiff
 
     Note: Ruby's buffered I/O means that if you want to write the string data to a file or tempfile make sure to call `#flush` to ensure the contents don't get stuck in the buffer.
 
@@ -67,7 +63,7 @@ If you're on Windows or you installed `wkhtmltoimage` by hand to a location othe
 
 ### Default image format
 
-May be set to one of [`IMGKit::KNOWN_FORMATS = [:jpg, :jpeg, :png, :tiff, :tif]`](https://github.com/csquared/IMGKit/blob/d3755e2c23ba605da2f41e17f3edc99f3037d1c7/lib/imgkit/imgkit.rb#L2)
+May be set to one of [`IMGKit::KNOWN_FORMATS = [:jpg, :jpeg, :png]`](https://github.com/csquared/IMGKit/blob/master/lib/imgkit/imgkit.rb#L2)
 
       config.default_format = :png
 
