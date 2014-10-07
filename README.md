@@ -14,7 +14,7 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
  * **Automatic**: `sudo imgkit --install-wkhtmltoimage`
  install latest version into /usr/local/bin
  (overwrite defaults with e.g. ARCHITECTURE=amd64 TO=/home/foo/bin)
- * By hand: http://code.google.com/p/wkhtmltopdf/downloads/list
+ * By hand: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
 
 ## Usage
 
