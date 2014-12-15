@@ -22,6 +22,7 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     # run `wkhtmltoimage --extended-help` for a full list of options
     kit = IMGKit.new(html, :quality => 50)
     kit.stylesheets << '/path/to/css/file'
+    kit.javascripts << '/path/to/js/file'
 
     # Get the image BLOB
     img = kit.to_img
@@ -36,7 +37,7 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     file = kit.to_file('/path/to/save/file.png')
 
     # IMGKit.new can optionally accept a URL or a File.
-    # Stylesheets can not be added when source is provided as a URL of File.
+    # Stylesheets nor Javascripts can not be added when source is provided as a URL of File.
     kit = IMGKit.new('http://google.com')
     kit = IMGKit.new(File.new('/path/to/html'))
 

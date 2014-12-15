@@ -163,6 +163,37 @@ describe IMGKit do
       lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
     end
 
+    it "should have the script added to the head if it has one" do
+      imgkit = IMGKit.new("<html><head></head><body>Hai!</body></html>")
+      js = File.join(SPEC_ROOT,'fixtures','example.js')
+      imgkit.javascripts << js
+      imgkit.to_img
+      imgkit.source.to_s.should include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
+    end
+
+    it "should accept script as an object which responds to #read" do
+      imgkit = IMGKit.new("<html><head></head><body>Hai!</body></html>")
+      js = StringIO.new( File.read(File.join(SPEC_ROOT,'fixtures','example.js')) )
+      imgkit.javascripts << js
+      imgkit.to_img
+      imgkit.source.to_s.should include("<script>#{js.string}</script>")
+    end
+
+    it "should prepend script tags if the HTML doesn't have a head tag" do
+      imgkit = IMGKit.new("<html><body>Hai!</body></html>")
+      js = File.join(SPEC_ROOT,'fixtures','example.js')
+      imgkit.javascripts << js
+      imgkit.to_img
+      imgkit.source.to_s.should include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
+    end
+
+    it "should throw an error if the source is not html and script have been added" do
+      imgkit = IMGKit.new('http://google.com')
+      js = File.join(SPEC_ROOT,'fixtures','example.js')
+      imgkit.javascripts << js
+      lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
+    end
+
     def set_wkhtmltoimage_binary(binary)
       spec_dir = File.dirname(__FILE__)
       IMGKit.configuration.should_receive(:wkhtmltoimage).at_least(1).times.and_return(File.join(spec_dir, binary))
