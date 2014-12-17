@@ -252,20 +252,7 @@ Contributed by @ticktricktrack
 
 ## Testing
 
-Make sure the tests pass in the following ruby versions:
-
-  - 1.8.7-p370
-  - 1.9.2-p290
-  - 1.9.3-p194
-
-You can simply
-
-    $ rbenv-install <version>
-    $ rbenv shell <version>
-    $ bundle
-    $ bundle exec rake
-
-For each version
+Travis.yml is configured for multiple rubies, so I would just test a 2.1.x version and let travis handle the rest.
 
 ## Copyright
 
