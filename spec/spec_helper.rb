@@ -9,9 +9,7 @@ require 'rack'
 
 RSpec.configure do |config|
   config.before do
-    IMGKit.any_instance.stubs(:wkhtmltoimage).returns(
-      File.join(SPEC_ROOT,'..','bin','wkhtmltoimage-proxy')
-    )
+    IMGKit.any_instance.stubs(:wkhtmltoimage).returns('bundle exec wkhtmltoimage')
   end
 end
 

@@ -8,6 +8,5 @@ group :test do
   gem "rspec-core", "~> 2"
   gem "mocha"
   gem "rack"
-  gem "ruby-debug19", :platforms => :mri_19
-  gem "ruby-debug", :platforms => :mri_18
+  gem 'wkhtmltoimage-binary'
 end
