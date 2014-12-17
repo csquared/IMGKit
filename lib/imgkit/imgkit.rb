@@ -30,13 +30,14 @@ class IMGKit
     end
   end
 
-  attr_accessor :source, :stylesheets
+  attr_accessor :source, :stylesheets, :javascripts
   attr_reader :options
 
   def initialize(url_file_or_html, options = {})
     @source = Source.new(url_file_or_html)
 
     @stylesheets = []
+    @javascripts = []
 
     @options = IMGKit.configuration.default_options.merge(options)
     @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
@@ -102,6 +103,7 @@ class IMGKit
 
   def to_img(format = nil)
     append_stylesheets
+    append_javascripts
     set_format(format)
 
     opts = @source.html? ? {:stdin_data => @source.to_s} : {}
@@ -151,6 +153,14 @@ class IMGKit
       "<style>#{stylesheet.respond_to?(:read) ? stylesheet.read : File.read(stylesheet)}</style>"
     end
 
+    def script_tag_for(javascript)
+      if javascript.respond_to?(:read)
+        "<script>#{javascript.read}</script>"
+      else
+        "<script src=\"#{javascript}\" type=\"text/javascript\"></script>"
+      end
+    end
+
     def append_stylesheets
       raise ImproperSourceError.new('Stylesheets may only be added to an HTML source') if stylesheets.any? && !@source.html?
 
@@ -159,6 +169,18 @@ class IMGKit
           @source.to_s.gsub!(/(<\/head>)/, style_tag_for(stylesheet)+'\1')
         else
           @source.to_s.insert(0, style_tag_for(stylesheet))
+        end
+      end
+    end
+
+    def append_javascripts
+      raise ImproperSourceError.new('Javascripts may only be added to an HTML source') if javascripts.any? && !@source.html?
+
+      javascripts.each do |javascript|
+        if @source.to_s.match(/<\/head>/)
+          @source.to_s.gsub!(/(<\/head>)/, script_tag_for(javascript)+'\1')
+        else
+          @source.to_s.insert(0, script_tag_for(javascript))
         end
       end
     end
