@@ -1,5 +1,7 @@
 # IMGKit
 
+<img src="https://travis-ci.org/csquared/IMGKit.svg?branch=master" />
+
 Create JPGs using plain old HTML+CSS. Uses [wkhtmltoimage](http://github.com/antialize/wkhtmltopdf) on the backend which renders HTML using Webkit.
 
 Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
