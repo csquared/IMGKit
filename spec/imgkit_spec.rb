@@ -282,12 +282,11 @@ describe IMGKit do
       File.delete(@file_path) if File.exist?(@file_path)
     end
 
-    it "should create a file with the result of :to_img  as content" do
+    it "should create a binary file" do
       imgkit = IMGKit.new('html', :quality => 50)
-      imgkit.expects(:to_img).returns('CONTENT')
       file = imgkit.to_file(@file_path)
       file.should be_instance_of(File)
-      File.read(file.path).should == 'CONTENT'
+      File.exists?(file.path).should be_true
     end
 
     IMGKit::KNOWN_FORMATS.each do |format|

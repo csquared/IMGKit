@@ -45,7 +45,7 @@ class IMGKit
     raise NoExecutableError.new unless File.exists?(IMGKit.configuration.wkhtmltoimage)
   end
 
-  def command
+  def command(output_file = nil)
     args = [executable]
     args += normalize_options(@options).to_a.flatten.compact
 
@@ -55,7 +55,12 @@ class IMGKit
       args << @source.to_s
     end
 
-    args << '-' # Read IMG from stdout
+    if output_file
+      args << output_file.to_s
+    else
+      args << '-' # Read IMG from stdout
+    end
+
     args
   end
 
@@ -101,23 +106,22 @@ class IMGKit
     end
   end
 
-  def to_img(format = nil)
+  def to_img(format = nil, path = nil)
     append_stylesheets
     append_javascripts
     set_format(format)
 
     opts = @source.html? ? {:stdin_data => @source.to_s} : {}
-    result, stderr = capture3(*(command + [opts]))
+    result, stderr = capture3(*(command(path) + [opts]))
     result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
-
-    raise CommandFailedError.new(command.join(' '), stderr) if result.size == 0
+    raise CommandFailedError.new(command.join(' '), stderr) if path.nil? and result.size == 0
     result
   end
 
   def to_file(path)
     format = File.extname(path).gsub(/^\./,'').to_sym
-    set_format(format)
-    File.open(path,'w:ASCII-8BIT') {|file| file << self.to_img}
+    self.to_img(format, path)
+    File.new(path)
   end
 
   def method_missing(name, *args, &block)
