@@ -13,14 +13,14 @@ Heavily based on [PDFKit](http://github.com/jdpace/pdfkit/).
     gem install imgkit
 
 ### wkhtmltoimage
- 1. Use installer: `sudo imgkit --install-wkhtmltoimage`
- install latest version into /usr/local/bin
- (overwrite defaults with e.g. ARCHITECTURE=amd64 TO=/home/foo/bin)
- 2. Install by hand: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
- 3. Try using the `wkhtmltoimage-binary` gem (mac + linux)
+ 1. Use the `wkhtmltoimage-binary` gem (mac + linux)
 ```
 gem install wkhtmltoimage-binary
 ```
+ 2. Install by hand: [http://wkhtmltopdf.org/downloads.html](http://wkhtmltopdf.org/downloads.html)
+ 3. Use installer: `sudo imgkit --install-wkhtmltoimage`
+ install latest version into /usr/local/bin
+ (overwrite defaults with e.g. ARCHITECTURE=amd64 TO=/home/foo/bin)
 
 ## Usage
 
