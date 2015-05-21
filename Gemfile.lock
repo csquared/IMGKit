@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imgkit (1.6.0)
+    imgkit (1.6.1)
 
 GEM
   remote: https://rubygems.org/
