@@ -9,7 +9,7 @@ require 'imgkit/version'
 GOOGLE_CODE_URL = ENV['GOOGLE_CODE_URL'] || "http://code.google.com/p/wkhtmltopdf/downloads/list?can=1"
 
 def detect_architecture
-  case arch = Config::CONFIG['arch']
+  case arch = RbConfig::CONFIG['arch']
   when /x86_64-linux/i
     'amd64'
   when /linux/i
@@ -33,7 +33,7 @@ def cleanup(install_to)
 end
 
 def download_wkhtmltoimage(arch)
-  if ENV['BZIP'] 
+  if ENV['BZIP']
     download = "wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
     url = "http://wkhtmltopdf.googlecode.com/files/wkhtmltoimage-0.10.0_beta4-static-#{arch}.tar.bz2"
   else
@@ -43,7 +43,7 @@ def download_wkhtmltoimage(arch)
     url = "http://wkhtmltopdf.googlecode.com/files/#{download}"
   end
   puts "Downloading #{download} from #{url}"
-  
+
   `curl #{url} > #{download}`
   download
 end
@@ -77,9 +77,9 @@ OptionParser.new do |parser|
     @command = Proc.new do
       architecture = ENV['ARCHITECTURE'] || detect_architecture
       install_to = ENV['TO'] ? ENV['TO']+'/wkhtmltoimage' : IMGKit.configuration.wkhtmltoimage
-      
+
       Dir.chdir '/tmp'
-      
+
       cleanup(install_to)
       download = download_wkhtmltoimage(architecture)
       install(download, architecture, install_to)
