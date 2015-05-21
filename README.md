@@ -152,7 +152,7 @@ You can respond in a controller with:
 
     respond_to do |format|
       send_data(@kit.to_img(format.to_sym),
-                :type => "image/png", :disposition => 'inline')
+                :type => "image/#{format}", :disposition => 'inline')
     end
 
 This allows you to take advantage of rails page caching so you only generate the
