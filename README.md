@@ -228,7 +228,7 @@ Contributed by @ticktricktrack
     # private
 
     def take_snapshot
-      file = Tempfile.new(["template_#{self.id.to_s}", 'jpg'], 'tmp', :encoding => 'ascii-8bit')
+      file = Tempfile.new(["template_#{self.id.to_s}", '.jpg'], 'tmp', :encoding => 'ascii-8bit')
       file.write(IMGKit.new(self.html_body, quality: 50, width: 600).to_jpg)
       file.flush
       self.snapshot = file
