@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors = ["csquared"]
   s.email = %q{christopher.continanza@gmail.com}
-  s.homepage    = "http://rubygems.org/gems/imgkit"
+  s.homepage    = "https://github.com/csquared/IMGKit"
   s.summary =  %q{HTML+CSS -> JPG}
   s.description = %q{Uses wkhtmltoimage to create Images using HTML}
   s.post_install_message = File.read('POST_INSTALL')
