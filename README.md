@@ -50,6 +50,9 @@ gem install wkhtmltoimage-binary
     # Add any kind of option through meta tags
     IMGKit.new('<html><head><meta name="imgkit-quality" content="75"...
 
+    # Image width/height limits options
+    IMGKit.new(self.html_body, quality: 50, width: 600, height: 800)
+
     # Format shortcuts - New in 1.3!
     IMGKit.new("hello").to_jpg
     IMGKit.new("hello").to_jpeg
