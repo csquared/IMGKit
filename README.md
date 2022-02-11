@@ -67,6 +67,43 @@ If you're on Windows or you installed `wkhtmltoimage` by hand to a location othe
     IMGKit.configure do |config|
       config.wkhtmltoimage = '/path/to/wkhtmltoimage'
     end
+    
+You could put the binaries in your bin/ folder and load the correct one depending on the platform and CPU type:
+
+```ruby
+# config/initializers/imgkit.rb
+IMGKit.configure do |config|
+  if OS.linux? && OS.host_cpu == "x86_64"
+    config.wkhtmltoimage =
+      Rails.root.join("bin", "wkhtmltoimage-linux-amd64").to_s
+  elsif OS.mac? && OS.host_cpu == "x86_64"
+    config.wkhtmltoimage =
+      Rails.root.join("bin", "wkhtmltoimage-macos-amd64").to_s
+  else
+    puts OS.report
+    abort "You need to add a binary for wkhtmltoimage for your OS and CPU"
+  end
+end
+```
+
+To get `wkhtmltoimage-linux-amd64` you can get the latest `.deb` (if you are targeting ubuntu) from https://github.com/wkhtmltopdf/packaging/releases
+
+```
+docker run -it -v $(pwd):/data ubuntu:latest /bin/bash
+# or with fish
+# docker run -it -v (pwd):/data ubuntu:latest /bin/bash
+cd data
+dpkg -x wkhtmltox_0.12.6-1.focal_amd64.deb out
+exit
+cp out/usr/local/bin/wkhtmltoimage bin/wkhtmltoimage-linux-amd64
+```
+
+And for `wkhtmltoimage-macos-amd64` you can download the `.pkg` from https://github.com/wkhtmltopdf/packaging/releases,
+install it, then:
+
+```
+mv /usr/local/bin/wkhtmltoimage bin/wkhtmltoimage-macos-amd64
+```
 
 ### Default image format
 
