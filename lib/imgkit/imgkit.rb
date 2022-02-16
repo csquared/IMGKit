@@ -42,7 +42,7 @@ class IMGKit
     @options = IMGKit.configuration.default_options.merge(options)
     @options.merge! find_options_in_meta(url_file_or_html) unless source.url?
 
-    raise NoExecutableError.new unless File.exists?(IMGKit.configuration.wkhtmltoimage)
+    raise NoExecutableError.new unless File.exist?(IMGKit.configuration.wkhtmltoimage)
   end
 
   def command(output_file = nil)
