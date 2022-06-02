@@ -286,7 +286,7 @@ describe IMGKit do
       imgkit = IMGKit.new('html', :quality => 50)
       file = imgkit.to_file(@file_path)
       file.should be_instance_of(File)
-      File.exists?(file.path).should be_true
+      File.exist?(file.path).should be_true
     end
 
     IMGKit::KNOWN_FORMATS.each do |format|
