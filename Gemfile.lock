@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    imgkit (1.6.1)
+    imgkit (1.6.2)
 
 GEM
   remote: https://rubygems.org/
@@ -18,7 +18,6 @@ GEM
     rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.6.0)
-    wkhtmltoimage-binary (0.12.1)
 
 PLATFORMS
   ruby
@@ -30,7 +29,6 @@ DEPENDENCIES
   rake
   rspec (~> 2)
   rspec-core (~> 2)
-  wkhtmltoimage-binary
 
 BUNDLED WITH
-   1.17.1
+   2.1.4
