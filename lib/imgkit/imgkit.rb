@@ -111,8 +111,9 @@ class IMGKit
     append_javascripts
     set_format(format)
 
-    opts = @source.html? ? {:stdin_data => @source.to_s} : {}
-    result, stderr = capture3(*(command(path) + [opts]))
+    opts = {:binmode => true}
+    opts[:stdin_data] = @source.to_s if @source.html?
+    result, stderr = capture3(*command(path), opts)
     result.force_encoding("ASCII-8BIT") if result.respond_to? :force_encoding
     raise CommandFailedError.new(command.join(' '), stderr) if path.nil? and result.size == 0
     result
