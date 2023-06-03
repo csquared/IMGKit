@@ -14,6 +14,12 @@ describe IMGKit do
       imgkit.source.to_s.should == 'http://google.com'
     end
 
+    it "should accept a URL as the source with ampersand and scape the ampersand" do
+      imgkit = IMGKit.new('http://google.com?something=1&anotherthing=2')
+      imgkit.source.should be_url
+      imgkit.source.to_s.should == 'http://google.com?something=1\&anotherthing=2'
+    end
+
     it "should accept a File as the source" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
       imgkit = IMGKit.new(File.new(file_path))
