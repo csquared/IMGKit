@@ -4,8 +4,9 @@ gemspec
 
 group :test do
   gem "rake"
-  gem "rspec", "~> 2"
-  gem "rspec-core", "~> 2"
+  gem "rspec", "~> 3"
+  gem "rspec-core", "~> 3"
   gem "mocha"
   gem "rack", ">= 1.6.11"
+  gem "wkhtmltoimage-binary"
 end

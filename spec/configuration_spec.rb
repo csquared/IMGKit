@@ -16,8 +16,8 @@ describe IMGKit::Configuration do
         end
 
         it "should return the result of `bundle exec which wkhtmltoimage` with whitespace stripped" do
-          subject.should_receive(:`).with("bundle exec which wkhtmltoimage")
-          subject.wkhtmltoimage.should == system_path.chomp
+          expect(subject).to receive(:`).with("bundle exec which wkhtmltoimage")
+          expect(subject.wkhtmltoimage).to eq system_path.chomp
         end
 
         context "with warning" do
@@ -26,8 +26,8 @@ describe IMGKit::Configuration do
           end
 
           it "should return the result of `bundle exec which wkhtmltoimage` with warning stripped" do
-            subject.should_receive(:`).with("bundle exec which wkhtmltoimage")
-            subject.wkhtmltoimage.should == system_path.chomp
+            expect(subject).to receive(:`).with("bundle exec which wkhtmltoimage")
+            expect(subject.wkhtmltoimage).to eq system_path.chomp
           end
         end
       end
@@ -38,8 +38,8 @@ describe IMGKit::Configuration do
         end
 
         it "should return the result of `which wkhtmltoimage` with whitespace stripped" do
-          subject.should_receive(:`).with("which wkhtmltoimage")
-          subject.wkhtmltoimage.should == system_path.chomp
+          expect(subject).to receive(:`).with("which wkhtmltoimage")
+          expect(subject.wkhtmltoimage).to eq system_path.chomp
         end
       end
     end
@@ -51,7 +51,7 @@ describe IMGKit::Configuration do
       end
 
       it "should return the fallback path" do
-        subject.wkhtmltoimage.should == "/usr/local/bin/wkhtmltoimage"
+        expect(subject.wkhtmltoimage).to eq "/usr/local/bin/wkhtmltoimage"
       end
     end
 
@@ -63,8 +63,8 @@ describe IMGKit::Configuration do
       end
 
       it "should not check the system version and return the explicit path" do
-        subject.should_not_receive(:`)
-        subject.wkhtmltoimage.should == explicit_path
+        expect(subject).to_not receive(:`)
+        expect(subject.wkhtmltoimage).to eq explicit_path
       end
     end
   end
