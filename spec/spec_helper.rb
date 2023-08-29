@@ -3,13 +3,12 @@ $LOAD_PATH.unshift(SPEC_ROOT)
 $LOAD_PATH.unshift(File.join(SPEC_ROOT, '..', 'lib'))
 require 'imgkit'
 require 'rspec'
-require 'rspec/autorun'
 require 'mocha'
 require 'rack'
 
 RSpec.configure do |config|
   config.before do
-    IMGKit.any_instance.stubs(:wkhtmltoimage).returns('bundle exec wkhtmltoimage')
+    allow_any_instance_of(IMGKit).to receive(:wkhtmltoimage).and_return('bundle exec wkhtmltoimage')
   end
 end
 
@@ -38,7 +37,7 @@ RSpec::Matchers.define :be_a do |expected|
     MagicNumber.read(actual) == @expected
   end
 
-  failure_message_for_should do |actual|
+  failure_message do |actual|
     actual = MagicNumber.read(actual)
     "expctected #{actual.inspect},#{actual.encoding} to equal #{@expected.inspect},#{@expected.encoding}"
   end
