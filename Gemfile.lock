@@ -1,23 +1,31 @@
 PATH
   remote: .
   specs:
-    imgkit (1.6.2)
+    imgkit (1.6.3)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    diff-lcs (1.1.2)
-    mocha (0.9.12)
-    rack (2.0.6)
-    rake (0.9.2.2)
-    rspec (2.6.0)
-      rspec-core (~> 2.6.0)
-      rspec-expectations (~> 2.6.0)
-      rspec-mocks (~> 2.6.0)
-    rspec-core (2.6.4)
-    rspec-expectations (2.6.0)
-      diff-lcs (~> 1.1.2)
-    rspec-mocks (2.6.0)
+    diff-lcs (1.5.0)
+    mocha (2.1.0)
+      ruby2_keywords (>= 0.0.5)
+    rack (3.0.8)
+    rake (13.0.6)
+    rexml (3.2.6)
+    rspec (3.12.0)
+      rspec-core (~> 3.12.0)
+      rspec-expectations (~> 3.12.0)
+      rspec-mocks (~> 3.12.0)
+    rspec-core (3.12.2)
+      rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.3)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-mocks (3.12.6)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-support (3.12.1)
+    ruby2_keywords (0.0.5)
 
 PLATFORMS
   ruby
@@ -27,8 +35,9 @@ DEPENDENCIES
   mocha
   rack (>= 1.6.11)
   rake
-  rspec (~> 2)
-  rspec-core (~> 2)
+  rexml
+  rspec (~> 3)
+  rspec-core (~> 3)
 
 BUNDLED WITH
-   2.1.4
+   2.4.19

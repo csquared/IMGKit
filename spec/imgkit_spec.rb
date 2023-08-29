@@ -4,21 +4,21 @@ describe IMGKit do
   context "initialization" do
     it "should accept HTML as the source" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
-      imgkit.source.should be_html
-      imgkit.source.to_s.should == '<h1>Oh Hai</h1>'
+      expect(imgkit.source).to be_html
+      expect(imgkit.source.to_s).to eq '<h1>Oh Hai</h1>'
     end
 
     it "should accept a URL as the source" do
       imgkit = IMGKit.new('http://google.com')
-      imgkit.source.should be_url
-      imgkit.source.to_s.should == 'http://google.com'
+      expect(imgkit.source).to be_url
+      expect(imgkit.source.to_s).to eq 'http://google.com'
     end
 
     it "should accept a File as the source" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
       imgkit = IMGKit.new(File.new(file_path))
-      imgkit.source.should be_file
-      imgkit.source.to_s.should == file_path
+      expect(imgkit.source).to be_file
+      expect(imgkit.source.to_s).to eq file_path
     end
 
     it "should provide no default options" do
@@ -26,8 +26,8 @@ describe IMGKit do
 
     it "should set a default height" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
-      imgkit.options.length.should be 1
-      imgkit.options[:height].should be 0
+      expect(imgkit.options.length).to be 1
+      expect(imgkit.options[:height]).to be 0
     end
 
 
@@ -39,52 +39,52 @@ describe IMGKit do
 
     it "should not have any stylesheet by default" do
       imgkit = IMGKit.new('<h1>Oh Hai</h1>')
-      imgkit.stylesheets.should be_empty
+      expect(imgkit.stylesheets).to be_empty
     end
   end
 
   context "command" do
     it "should contstruct the correct command" do
       imgkit = IMGKit.new('html')
-      imgkit.command[0].should include('wkhtmltoimage')
-      imgkit.command.should include('-')
+      expect(imgkit.command[0]).to include('wkhtmltoimage')
+      expect(imgkit.command).to include('-')
     end
 
     it "should parse the options into a cmd line friedly format" do
       imgkit = IMGKit.new('html', :quality => 75)
-      imgkit.command.should include('--quality')
+      expect(imgkit.command).to include('--quality')
     end
 
     it "will not include default options it is told to omit" do
       imgkit = IMGKit.new('html')
       imgkit = IMGKit.new('html', :disable_smart_shrinking => false)
-      imgkit.command.should_not include('--disable-smart-shrinking')
+      expect(imgkit.command).to_not include('--disable-smart-shrinking')
     end
     it "should encapsulate string arguments in quotes" do
       imgkit = IMGKit.new('html', :header_center => "foo [page]")
-      imgkit.command[imgkit.command.index('--header-center') + 1].should == 'foo [page]'
+      expect(imgkit.command[imgkit.command.index('--header-center') + 1]).to eq 'foo [page]'
     end
 
     it "should properly handle multi-part arguments" do
       imgkit = IMGKit.new('html', :custom_header => ['User-Agent', 'some user agent'])
-      imgkit.command[imgkit.command.index('--custom-header') + 1].should == 'User-Agent'
-      imgkit.command[imgkit.command.index('--custom-header') + 2].should == 'some user agent'
+      expect(imgkit.command[imgkit.command.index('--custom-header') + 1]).to eq 'User-Agent'
+      expect(imgkit.command[imgkit.command.index('--custom-header') + 2]).to eq 'some user agent'
     end
 
     it "read the source from stdin if it is html" do
       imgkit = IMGKit.new('html')
-      imgkit.command[-2..-1].should == ['-', '-']
+      expect(imgkit.command[-2..-1]).to eq ['-', '-']
     end
 
     it "specify the URL to the source if it is a url" do
       imgkit = IMGKit.new('http://google.com')
-      imgkit.command[-2..-1].should == ['http://google.com', '-']
+      expect(imgkit.command[-2..-1]).to eq ['http://google.com', '-']
     end
 
     it "should specify the path to the source if it is a file" do
       file_path = File.join(SPEC_ROOT,'fixtures','example.html')
       imgkit = IMGKit.new(File.new(file_path))
-      imgkit.command[-2..-1].should == [file_path, '-']
+      expect(imgkit.command[-2..-1]).to eq [file_path, '-']
     end
 
     it "should detect special imgkit meta tags" do
@@ -98,9 +98,9 @@ describe IMGKit do
         </html>
       }
       imgkit = IMGKit.new(body)
-      imgkit.command[imgkit.command.index('--page-size') + 1].should == 'Legal'
-      imgkit.command[imgkit.command.index('--orientation') + 1].should == 'Landscape'
-      imgkit.command[imgkit.command.index('--crop-h') + 1].should == '900'
+      expect(imgkit.command[imgkit.command.index('--page-size') + 1]).to eq 'Legal'
+      expect(imgkit.command[imgkit.command.index('--orientation') + 1]).to eq 'Landscape'
+      expect(imgkit.command[imgkit.command.index('--crop-h') + 1]).to eq '900'
     end
   end
 
@@ -117,19 +117,19 @@ describe IMGKit do
     it "should generate a IMG of the HTML" do
       imgkit = IMGKit.new('html')
       img = imgkit.to_img
-      filetype_of(img).should include('JPEG')
+      expect(filetype_of(img)).to include('JPEG')
     end
 
     it "should generate an Image with a numerical parameter" do
       imgkit = IMGKit.new('html', :quality => 50)
       img = imgkit.to_img
-      filetype_of(img).should include('JPEG')
+      expect(filetype_of(img)).to include('JPEG')
     end
 
     it "should generate an Image with a symbol parameter" do
       imgkit = IMGKit.new('html', :username => 'chris')
       img = imgkit.to_img
-      filetype_of(img).should include('JPEG')
+      expect(filetype_of(img)).to include('JPEG')
     end
 
     it "should have the stylesheet added to the head if it has one" do
@@ -137,7 +137,7 @@ describe IMGKit do
       css = File.join(SPEC_ROOT,'fixtures','example.css')
       imgkit.stylesheets << css
       imgkit.to_img
-      imgkit.source.to_s.should include("<style>#{File.read(css)}</style>")
+      expect(imgkit.source.to_s).to include("<style>#{File.read(css)}</style>")
     end
 
     it "should accept stylesheet as an object which responds to #read" do
@@ -145,7 +145,7 @@ describe IMGKit do
       css = StringIO.new( File.read(File.join(SPEC_ROOT,'fixtures','example.css')) )
       imgkit.stylesheets << css
       imgkit.to_img
-      imgkit.source.to_s.should include("<style>#{css.string}</style>")
+      expect(imgkit.source.to_s).to include("<style>#{css.string}</style>")
     end
 
     it "should prepend style tags if the HTML doesn't have a head tag" do
@@ -153,14 +153,14 @@ describe IMGKit do
       css = File.join(SPEC_ROOT,'fixtures','example.css')
       imgkit.stylesheets << css
       imgkit.to_img
-      imgkit.source.to_s.should include("<style>#{File.read(css)}</style><html>")
+      expect(imgkit.source.to_s).to include("<style>#{File.read(css)}</style><html>")
     end
 
     it "should throw an error if the source is not html and stylesheets have been added" do
       imgkit = IMGKit.new('http://google.com')
       css = File.join(SPEC_ROOT,'fixtures','example.css')
       imgkit.stylesheets << css
-      lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
+      expect { imgkit.to_img }.to raise_error(IMGKit::ImproperSourceError)
     end
 
     it "should have the script added to the head if it has one" do
@@ -168,7 +168,7 @@ describe IMGKit do
       js = File.join(SPEC_ROOT,'fixtures','example.js')
       imgkit.javascripts << js
       imgkit.to_img
-      imgkit.source.to_s.should include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
+      expect(imgkit.source.to_s).to include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
     end
 
     it "should accept script as an object which responds to #read" do
@@ -176,7 +176,7 @@ describe IMGKit do
       js = StringIO.new( File.read(File.join(SPEC_ROOT,'fixtures','example.js')) )
       imgkit.javascripts << js
       imgkit.to_img
-      imgkit.source.to_s.should include("<script>#{js.string}</script>")
+      expect(imgkit.source.to_s).to include("<script>#{js.string}</script>")
     end
 
     it "should prepend script tags if the HTML doesn't have a head tag" do
@@ -184,36 +184,36 @@ describe IMGKit do
       js = File.join(SPEC_ROOT,'fixtures','example.js')
       imgkit.javascripts << js
       imgkit.to_img
-      imgkit.source.to_s.should include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
+      expect(imgkit.source.to_s).to include("<script src=\"#{js}\" type=\"text/javascript\"></script>")
     end
 
     it "should throw an error if the source is not html and script have been added" do
       imgkit = IMGKit.new('http://google.com')
       js = File.join(SPEC_ROOT,'fixtures','example.js')
       imgkit.javascripts << js
-      lambda { imgkit.to_img }.should raise_error(IMGKit::ImproperSourceError)
+      expect { imgkit.to_img }.to raise_error(IMGKit::ImproperSourceError)
     end
 
     def set_wkhtmltoimage_binary(binary)
       spec_dir = File.dirname(__FILE__)
-      IMGKit.configuration.should_receive(:wkhtmltoimage).at_least(1).times.and_return(File.join(spec_dir, binary))
+      expect(IMGKit.configuration).to receive(:wkhtmltoimage).at_least(1).times.and_return(File.join(spec_dir, binary))
     end
 
     it "should throw an error if the wkhtmltoimage command fails" do
       set_wkhtmltoimage_binary 'error_binary'
       imgkit = IMGKit.new('http://www.example.com')
-      lambda { imgkit.to_img }.should raise_error(IMGKit::CommandFailedError)
+      expect { imgkit.to_img }.to raise_error(IMGKit::CommandFailedError)
     end
 
     it "should be able to handle lots of error output" do
       set_wkhtmltoimage_binary 'warning_binary'
       imgkit = IMGKit.new("<html><body>Hai!</body></html>")
-      imgkit.to_img.should == "result\n"
+      expect(imgkit.to_img).to eq "result\n"
     end
 
     context "when there is no format" do
       it "should fallback to jpg" do
-        IMGKit.new("Hello, world").to_img.should be_a(:jpg)
+        expect(IMGKit.new("Hello, world").to_img).to be_a(:jpg)
       end
 
       context "when a default_format has been configured" do
@@ -230,28 +230,28 @@ describe IMGKit do
         end
 
         it "should use the configured format" do
-          IMGKit.new("Oh hai!").to_img.should be_a(:png)
+          expect(IMGKit.new("Oh hai!").to_img).to be_a(:png)
         end
       end
     end
 
     context "when format = :jpg" do
       it "should create a jpg" do
-        IMGKit.new("Hello, world").to_img(:jpg).should be_a(:jpg)
+        expect(IMGKit.new("Hello, world").to_img(:jpg)).to be_a(:jpg)
       end
     end
 
     context "when format is a known format" do
       it "should create an image with that format" do
         IMGKit::KNOWN_FORMATS.each do |format|
-          IMGKit.new("Hello, world").to_img(format).should be_a(format)
+          expect(IMGKit.new("Hello, world").to_img(format)).to be_a(format)
         end
       end
     end
 
     context "when format is unknown" do
       it "should raise an UnknownFormatError" do
-        lambda { IMGKit.new("Hello, world").to_img(:blah) }.should raise_error(IMGKit::UnknownFormatError)
+        expect { IMGKit.new("Hello, world").to_img(:blah) }.to raise_error(IMGKit::UnknownFormatError)
       end
     end
   end
@@ -260,7 +260,7 @@ describe IMGKit do
     IMGKit::KNOWN_FORMATS.each do |format|
       describe "#to_#{format}" do
         it "should create a #{format}" do
-          IMGKit.new("Hello").send("to_#{format}").should be_a(format)
+          expect(IMGKit.new("Hello").send("to_#{format}")).to be_a(format)
         end
       end
     end
@@ -268,7 +268,7 @@ describe IMGKit do
 
   context "#to_<unkown_format>" do
     it "should raise and UnknownFormatError" do
-      lambda { IMGKit.new("Hello, world").to_blah }.should raise_error(IMGKit::UnknownFormatError)
+      expect { IMGKit.new("Hello, world").to_blah }.to raise_error(IMGKit::UnknownFormatError)
     end
   end
 
@@ -285,8 +285,8 @@ describe IMGKit do
     it "should create a binary file" do
       imgkit = IMGKit.new('html', :quality => 50)
       file = imgkit.to_file(@file_path)
-      file.should be_instance_of(File)
-      File.exist?(file.path).should be_true
+      expect(file).to be_instance_of(File)
+      expect(File.exist?(file.path)).to be true
     end
 
     IMGKit::KNOWN_FORMATS.each do |format|
@@ -294,22 +294,20 @@ describe IMGKit do
         @file_path = File.join(SPEC_ROOT,'fixtures',"test.#{format}")
         imgkit = IMGKit.new('html', :quality => 50)
         file = imgkit.to_file(@file_path)
-        file.should be_instance_of(File)
-        File.open(file.path, "r:ASCII-8BIT") { |f| f.read.should be_a(format) }
+        expect(file).to be_instance_of(File)
+        File.open(file.path, "r:ASCII-8BIT") { |f| expect(f.read).to be_a(format) }
       end
     end
 
     it "should raise UnknownFormatError when format is unknown" do
       kit = IMGKit.new("html")
-      lambda {
-        kit.to_file("file.bad_format")
-      }.should raise_error(IMGKit::UnknownFormatError)
+      expect { kit.to_file("file.bad_format") }.to raise_error(IMGKit::UnknownFormatError)
     end
 
     it "should not create the file if format is unknown" do
       kit = IMGKit.new("html")
       kit.to_file("file.bad_format") rescue nil
-      File.exist?("file.bad_format").should be_false
+      expect(File.exist?("file.bad_format")).to be false
     end
   end
 
@@ -326,7 +324,7 @@ describe IMGKit do
     it "should not allow shell injection in options" do
       imgkit = IMGKit.new('html', :password => "blah\"; touch #{@test_path} #")
       imgkit.to_img
-      File.exist?(@test_path).should be_false
+      expect(File.exist?(@test_path)).to be false
     end
   end
 end

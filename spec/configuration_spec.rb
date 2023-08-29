@@ -7,51 +7,51 @@ describe IMGKit::Configuration do
       let(:system_path_with_bundler_warning) { "`/` is not writable.\nBundler will use `/tmp/bundler/home/unknown' as your home directory temporarily.\n/path/to/wkhtmltoimage\n" }
 
       before(:each) do
-        subject.stub :` => system_path
+        allow(subject).to receive(:`).and_return(system_path)
       end
 
       context "with Bundler" do
         before(:each) do
-          subject.stub :using_bundler? => true
+          allow(subject).to receive(:using_bundler?).and_return(true)
         end
 
         it "should return the result of `bundle exec which wkhtmltoimage` with whitespace stripped" do
-          subject.should_receive(:`).with("bundle exec which wkhtmltoimage")
-          subject.wkhtmltoimage.should == system_path.chomp
+          expect(subject).to receive(:`).with("bundle exec which wkhtmltoimage")
+          expect(subject.wkhtmltoimage).to eq system_path.chomp
         end
 
         context "with warning" do
           before(:each) do
-            subject.stub :` => system_path_with_bundler_warning
+            allow(subject).to receive(:`).and_return(system_path_with_bundler_warning)
           end
 
           it "should return the result of `bundle exec which wkhtmltoimage` with warning stripped" do
-            subject.should_receive(:`).with("bundle exec which wkhtmltoimage")
-            subject.wkhtmltoimage.should == system_path.chomp
+            expect(subject).to receive(:`).with("bundle exec which wkhtmltoimage")
+            expect(subject.wkhtmltoimage).to eq system_path.chomp
           end
         end
       end
 
       context "without Bundler" do
         before(:each) do
-          subject.stub :using_bundler? => false
+          allow(subject).to receive(:using_bundler?).and_return(false)
         end
 
         it "should return the result of `which wkhtmltoimage` with whitespace stripped" do
-          subject.should_receive(:`).with("which wkhtmltoimage")
-          subject.wkhtmltoimage.should == system_path.chomp
+          expect(subject).to receive(:`).with("which wkhtmltoimage")
+          expect(subject.wkhtmltoimage).to eq system_path.chomp
         end
       end
     end
 
     context "system version does not exist" do
       before(:each) do
-        subject.stub :` => "\n"
-        subject.stub :using_bundler? => false
+        allow(subject).to receive(:`).and_return("\n")
+        allow(subject).to receive(:using_bundler?).and_return(false)
       end
 
       it "should return the fallback path" do
-        subject.wkhtmltoimage.should == "/usr/local/bin/wkhtmltoimage"
+        expect(subject.wkhtmltoimage).to eq "/usr/local/bin/wkhtmltoimage"
       end
     end
 
@@ -63,8 +63,8 @@ describe IMGKit::Configuration do
       end
 
       it "should not check the system version and return the explicit path" do
-        subject.should_not_receive(:`)
-        subject.wkhtmltoimage.should == explicit_path
+        expect(subject).to_not receive(:`)
+        expect(subject.wkhtmltoimage).to eq explicit_path
       end
     end
   end
