@@ -11,6 +11,7 @@ GEM
       ruby2_keywords (>= 0.0.5)
     rack (3.0.8)
     rake (13.0.6)
+    rexml (3.2.6)
     rspec (3.12.0)
       rspec-core (~> 3.12.0)
       rspec-expectations (~> 3.12.0)
@@ -25,7 +26,6 @@ GEM
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
     ruby2_keywords (0.0.5)
-    wkhtmltoimage-binary (0.12.5)
 
 PLATFORMS
   ruby
@@ -35,9 +35,9 @@ DEPENDENCIES
   mocha
   rack (>= 1.6.11)
   rake
+  rexml
   rspec (~> 3)
   rspec-core (~> 3)
-  wkhtmltoimage-binary
 
 BUNDLED WITH
-   2.1.4
+   2.4.19
