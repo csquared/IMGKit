@@ -7,12 +7,12 @@ describe IMGKit::Configuration do
       let(:system_path_with_bundler_warning) { "`/` is not writable.\nBundler will use `/tmp/bundler/home/unknown' as your home directory temporarily.\n/path/to/wkhtmltoimage\n" }
 
       before(:each) do
-        subject.stub :` => system_path
+        allow(subject).to receive(:`).and_return(system_path)
       end
 
       context "with Bundler" do
         before(:each) do
-          subject.stub :using_bundler? => true
+          allow(subject).to receive(:using_bundler?).and_return(true)
         end
 
         it "should return the result of `bundle exec which wkhtmltoimage` with whitespace stripped" do
@@ -22,7 +22,7 @@ describe IMGKit::Configuration do
 
         context "with warning" do
           before(:each) do
-            subject.stub :` => system_path_with_bundler_warning
+            allow(subject).to receive(:`).and_return(system_path_with_bundler_warning)
           end
 
           it "should return the result of `bundle exec which wkhtmltoimage` with warning stripped" do
@@ -34,7 +34,7 @@ describe IMGKit::Configuration do
 
       context "without Bundler" do
         before(:each) do
-          subject.stub :using_bundler? => false
+          allow(subject).to receive(:using_bundler?).and_return(false)
         end
 
         it "should return the result of `which wkhtmltoimage` with whitespace stripped" do
@@ -46,8 +46,8 @@ describe IMGKit::Configuration do
 
     context "system version does not exist" do
       before(:each) do
-        subject.stub :` => "\n"
-        subject.stub :using_bundler? => false
+        allow(subject).to receive(:`).and_return("\n")
+        allow(subject).to receive(:using_bundler?).and_return(false)
       end
 
       it "should return the fallback path" do
